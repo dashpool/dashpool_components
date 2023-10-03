@@ -2,7 +2,7 @@ import json
 from setuptools import setup
 
 
-with open('package.json') as f:
+with open('dashpool_components/package-info.json') as f:
     package = json.load(f)
 
 package_name = package["name"].replace(" ", "_").replace("-", "_")
