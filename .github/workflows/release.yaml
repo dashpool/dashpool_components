@@ -33,7 +33,7 @@ jobs:
         with:
           token: ${{ secrets.NPM_TOKEN }}
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: ${{ secrets.FLIT_USERNAME }}
           password: ${{ secrets.FLIT_PASSWORD }}
