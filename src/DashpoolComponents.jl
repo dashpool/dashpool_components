@@ -7,7 +7,6 @@ const version = "0.0.1"
 
 include("jl/''_dashpoolprovider.jl")
 include("jl/''_explorer.jl")
-include("jl/''_helper.jl")
 include("jl/''_history.jl")
 
 function __init__()

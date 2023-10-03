@@ -13,7 +13,7 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 
 import { useDashpoolData } from './DashpoolProvider';
-import { setDashpoolEvent, DashpoolEvent, TreeViewNode, findTreeViewNode, buildExplorerTree, findTargetElement, generateUniqueId, findTreeNode } from './helper';
+import { setDashpoolEvent, DashpoolEvent, TreeViewNode, findTreeViewNode, buildExplorerTree, findTargetElement, generateUniqueId, findTreeNode } from '../helper';
 
 
 
@@ -52,7 +52,7 @@ type ExplorerProps = {
 
 
 /**
- * Component description
+ * A component to mimic a file explorer
  */
 const Explorer = (props: ExplorerProps) => {
   const { id, nodes, setProps } = props;

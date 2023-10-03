@@ -2,7 +2,7 @@
 
 export(''DashpoolProvider)
 export(''Explorer)
-export(''helper)
 export(''History)
 export(DashpoolContext)
+export(helper)
 export(TreeView)

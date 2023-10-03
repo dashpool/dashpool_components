@@ -39,6 +39,9 @@ type DashpoolProviderProps = {
   setProps?: (props: Record<string, any>) => void;
 }
 
+/**
+ * Context provider for easy interaction between Dashpool components
+ */
 const DashpoolProvider = (props: DashpoolProviderProps) => {
   const { children } = props;
   const [sharedData, setSharedData] = useState<SharedData>({});

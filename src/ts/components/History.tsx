@@ -8,7 +8,7 @@ import { MenuItem } from 'primereact/menuitem';
 import { Button } from 'primereact/button';
 import { useDashpoolData } from './DashpoolProvider';
 
-import { setDashpoolEvent, DashpoolEvent, TreeViewNode, findTreeViewNode, buildHistoryTree, findTargetElement } from './helper';
+import { setDashpoolEvent, DashpoolEvent, TreeViewNode, findTreeViewNode, buildHistoryTree, findTargetElement } from '../helper';
 
 
 
@@ -41,7 +41,7 @@ type HistoryProps = {
 
 
 /**
- * Component description
+ * Component to serve as a history explorer
  */
 const History = (props: HistoryProps) => {
   const { id, nodes, setProps } = props;

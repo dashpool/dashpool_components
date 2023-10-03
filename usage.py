@@ -2,7 +2,7 @@ import dash
 import dash_lumino_components as dlc
 from dash import html, dcc, Input, Output
 
-import dashpool_components_not_needed
+import dashpool_components
 import json
 import random
 
@@ -33,7 +33,7 @@ menu = dlc.Menu([
                         label="test", icon="fa fa-plus"),
         ], id="openMenu", title="Widgets")
 
-layout = lambda: dashpool_components_not_needed.DashpoolProvider([
+layout = lambda: dashpool_components.DashpoolProvider([
     dcc.Interval(id='userupdate', interval=20000, n_intervals=0),
     dlc.MenuBar(menu, 'menuBar'),
     dlc.BoxPanel([
@@ -41,7 +41,7 @@ layout = lambda: dashpool_components_not_needed.DashpoolProvider([
             dlc.TabPanel(
                  [
                     dlc.Panel(id="tab-a", children=[
-                        dashpool_components_not_needed.Explorer(id='explorer', nodes=explorerNodes),
+                        dashpool_components.Explorer(id='explorer', nodes=explorerNodes),
                          
                     ],
                     label="Explorer", icon="far fa-clone"),
@@ -69,7 +69,7 @@ layout = lambda: dashpool_components_not_needed.DashpoolProvider([
             dlc.TabPanel(
                 [
                     dlc.Panel(id="tab-h", children=[
-                        dashpool_components_not_needed.History(id="history", nodes=historyNodes)
+                        dashpool_components.History(id="history", nodes=historyNodes)
                     ], label="History", icon="fa fa-clock-rotate-left"),
 
                 ],
