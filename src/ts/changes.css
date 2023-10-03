@@ -1,0 +1,108 @@
+/*  ========== prime react ========== */
+
+.p-tree {
+    padding: 0;
+    border: unset;
+    height: 100%;
+}
+
+.p-tree .p-treenode-droppoint {
+    height: 0;
+}
+
+.p-tree .p-tree-container .p-treenode .p-treenode-content {
+    padding: 0;
+    white-space: nowrap;
+}
+
+.p-tree .p-tree-container .p-treenode {
+    padding: 0;
+}
+
+.p-tree-container {
+    padding: 3px;
+    height: calc(100% - 50px);
+}
+
+.p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler {
+    margin-right: 3px;
+}
+
+.p-tree .p-treenode-children {
+    padding: 0 0 0 15px;
+}
+
+.p-tree .p-tree-container .p-treenode .p-treenode-content .p-treenode-icon {
+    color: #000;
+}
+
+
+
+
+/*  ========== dash-lumino ========== */
+.lm-SideBar .p-TabBar-tab.p-mod-current {
+    border-top: 2px solid #f5681b !important;
+    background-color: #fff !important;
+}
+.lm-TabBar-tab.lm-mod-current {
+    border-top: 2px solid #f5681b !important;
+    background-color: #fff !important;
+}
+
+.lm-TabBar-tab {
+    background-color: #f0ebe9 !important;
+}
+
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+    scrollbar-width: auto;
+    scrollbar-color: #ff9c66 #ffffff;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #ffffff;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #ff8543;
+    border-radius: 3px;
+    -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.6);
+}
+
+
+
+/* ============ Context Menus ============*/
+.p-contextmenu {
+    padding: 3px 0;
+    background: #ffffff;
+    color: #212529;
+    border: 1px solid silver;
+    box-shadow: 0 1px 6px rgba(0,0,0,.2);
+    border-radius: unset;
+}
+
+
+
+/* ======= reload button ===========*/
+
+.p-tree-reload.p-tree {
+    margin-top: -40px;
+}
+
+.p-tree-reload > .p-tree-header {
+    width: calc(100% - 50px);
+}
+
+.p-tree-reload.p-button {
+    right: calc(-100% + 42px);
+    margin-top: 2px;
+}

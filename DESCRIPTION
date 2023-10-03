@@ -1,0 +1,13 @@
+Package: dashpoolComponents
+Title: Custom Components for Dashpool
+Version: 0.0.1
+Description: Custom Components for Dashpool
+Depends: R (>= 3.0.2)
+Imports: 
+Suggests: 
+License: MIT + file LICENSE
+URL: https://github.com/dashpool/dashpool-components
+BugReports: https://github.com/dashpool/dashpool-components/issues
+Encoding: UTF-8
+LazyData: true
+KeepSource: true

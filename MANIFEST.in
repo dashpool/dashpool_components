@@ -1,0 +1,2 @@
+recursive-include dashpool_components/** *.js *.css *.json *.html
+prune tests
