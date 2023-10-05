@@ -52,6 +52,13 @@ layout = lambda: dashpool_components.DashpoolProvider([
                  allowDeselect=True),
 
             dlc.DockPanel([
+               dlc.Widget([
+                   
+                    html.Button('Clear Explorer', id='clear-exp-btn', n_clicks=0),
+                    html.Button('Clear History', id='clear-hist-btn', n_clicks=0),
+
+
+                    ], id="d0", title="Extra"),
                 dlc.Widget([
                     html.H1("Explorer"),
                     html.Div(id="explorerChangeEvent"),
@@ -128,6 +135,22 @@ def print_output(input):
     return json.dumps(input)
 
 
+@app.callback(
+    Output("history", "nodes"),
+    Input("clear-hist-btn", "n_clicks"),
+    prevent_initial_call=True
+)
+def clear_hist(input):
+    return []
+
+
+@app.callback(
+    Output("explorer", "nodes"),
+    Input("clear-exp-btn", "n_clicks"),
+    prevent_initial_call=True
+)
+def clear_exp(input):
+    return []
 
 if __name__ == '__main__':
     app.run_server(debug=True)

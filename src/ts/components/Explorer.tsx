@@ -69,7 +69,9 @@ const Explorer = (props: ExplorerProps) => {
   const [contextMenuItems, _setContextMenuItems] = useState<MenuItem[]>([]);
 
 
-
+  useEffect(() => {
+    setInternalNodes(buildExplorerTree(nodes));
+  }, [props.nodes])
 
   const handleRefresh = () => {
     const newNRefreshed = nRefreshed + 1;

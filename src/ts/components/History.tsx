@@ -69,6 +69,10 @@ const History = (props: HistoryProps) => {
     }
   };
 
+  useEffect(() => {
+    setInternalNodes(buildHistoryTree(nodes));
+  }, [props.nodes])
+
 
   useEffect(() => {
     const container = hist.current.getElement();
