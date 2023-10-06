@@ -1,5 +1,6 @@
 import dash
 import dash_lumino_components as dlc
+import dash_express_components as dxc
 from dash import html, dcc, Input, Output
 
 import dashpool_components
@@ -59,6 +60,9 @@ layout = lambda: dashpool_components.DashpoolProvider([
 
 
                     ], id="d0", title="Extra"),
+
+
+
                 dlc.Widget([
                     html.H1("Explorer"),
                     html.Div(id="explorerChangeEvent"),
@@ -71,6 +75,37 @@ layout = lambda: dashpool_components.DashpoolProvider([
 
 
                     ], id="d1", title="Events"),
+
+
+
+               dlc.Widget([
+                   
+                    dashpool_components.Loader(
+                        id="loader", 
+                        url="https://localhost/example/_dash-update-component",
+                        request={
+                            "output": 'graph-content.figure',
+                            "outputs": {
+                                "property": 'figure',
+                                "id": 'graph-content'
+                            },
+                            "inputs": [
+                                {
+                                    "id": 'dropdown-selection',
+                                    "property": 'value',
+                                    "value": 'Canada'
+                                }
+                            ],
+                            "changedPropIds": []
+                        },
+                        output="graph-content.figure"
+
+                        
+                        )
+
+                    ], id="dl", title="Loader"),
+
+
             ], id="dock-panel"),
 
             dlc.TabPanel(

@@ -3,6 +3,7 @@
 export(''DashpoolProvider)
 export(''Explorer)
 export(''History)
+export(''Loader)
 export(DashpoolContext)
 export(helper)
 export(TreeView)
