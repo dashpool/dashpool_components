@@ -8,7 +8,7 @@ import { MenuItem } from 'primereact/menuitem';
 import { Button } from 'primereact/button';
 import { useDashpoolData } from './DashpoolProvider';
 
-import { setDashpoolEvent, DashpoolEvent, TreeViewNode, findTreeViewNode, buildHistoryTree, findTargetElement, generateUniqueId } from '../helper';
+import { setDashpoolEvent, DashpoolEvent, TreeViewNode, findTreeViewNode, buildHistoryTree, findTargetElement, generateUniqueId, iconMapping } from '../helper';
 
 
 
@@ -86,10 +86,9 @@ const History = (props: HistoryProps) => {
 
       if (internalNode && !node) {
         console.log("need to create node", internalNode);
-        const newNode = { "id": "12313", "type": "a", "label": "Appstate1", "parent": "history", "app": "tango", "frame": "Frame1" }
 
         const id = generateUniqueId();
-        const frame = internalNode["frame"];
+        const frame = internalNode["id"];
         const label = internalNode["label"];
 
 
@@ -108,7 +107,18 @@ const History = (props: HistoryProps) => {
           })
           .then(data => {
             // Handle the response data here if needed
-            updateSharedData({ dragElement: newNode });
+            updateSharedData({
+              dragElement: {
+                id: id,
+                key: 'a-' + id,
+                label: label,
+                data: data,
+                icon: iconMapping["a"],
+                children: [],
+                droppable: false,
+                draggable: true,
+              }
+            });
           })
           .catch(error => {
             console.error("There was a problem with the fetch operation:", error);
