@@ -37,7 +37,7 @@ const Loader = (props: LoaderProps) => {
   const { id, url, request, output } = props;
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any | null>(null);
-
+  const [error, setError] = useState<string | null>(null);
 
 
   useEffect(() => {
@@ -96,10 +96,12 @@ const Loader = (props: LoaderProps) => {
 
         // Update the state to display the rendered component
         setData(renderedComponent);
+        setError(null);
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
         setLoading(false);
+        setError('Error fetching data. Please try again later.');
       });
   }, [url, request, output]);
 
@@ -107,6 +109,8 @@ const Loader = (props: LoaderProps) => {
     <div id={id} style={{ width: '100%', height: '100%', position: 'relative' }}>
       {loading ? (
         <div className="spinner"></div>
+      ) : error ? (
+        <div className="alert alert-danger" role="alert" style={{ "top": "calc(50% - 28px)", "textAlign": "center" }}>{error}</div>
       ) : (
         data
       )}

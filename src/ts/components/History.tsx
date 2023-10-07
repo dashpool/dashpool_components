@@ -8,7 +8,7 @@ import { MenuItem } from 'primereact/menuitem';
 import { Button } from 'primereact/button';
 import { useDashpoolData } from './DashpoolProvider';
 
-import { setDashpoolEvent, DashpoolEvent, TreeViewNode, findTreeViewNode, buildHistoryTree, findTargetElement } from '../helper';
+import { setDashpoolEvent, DashpoolEvent, TreeViewNode, findTreeViewNode, buildHistoryTree, findTargetElement, generateUniqueId } from '../helper';
 
 
 
@@ -81,9 +81,45 @@ const History = (props: HistoryProps) => {
       const target = ev.target as HTMLElement;
 
       const internalNode = findTargetElement(container, target, internalNodes);
+      console.log(internalNode);
       const node = nodes.filter((el) => el.id === internalNode.id)[0];
-      if (node) {
+
+      if (internalNode && !node) {
+        console.log("need to create node", internalNode);
+        const newNode = { "id": "12313", "type": "a", "label": "Appstate1", "parent": "history", "app": "tango", "frame": "Frame1" }
+
+        const id = generateUniqueId();
+        const frame = internalNode["frame"];
+        const label = internalNode["label"];
+
+
+        fetch("/backend/savelayout", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id: id, frame: frame, label: label, app: label }), // Serialize the object to JSON
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json(); // Parse the response JSON
+          })
+          .then(data => {
+            // Handle the response data here if needed
+            updateSharedData({ dragElement: newNode });
+          })
+          .catch(error => {
+            console.error("There was a problem with the fetch operation:", error);
+            updateSharedData({ dragElement: {} });
+          });
+
+
+      } else if (node) {
         updateSharedData({ dragElement: { ...node, "parent": id } });
+      } else {
+        updateSharedData({ dragElement: {} });
       }
     };
 

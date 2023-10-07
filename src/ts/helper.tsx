@@ -202,7 +202,7 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
                 icon: 'fa-solid fa-cube',
                 children: [],
                 droppable: false,
-                draggable: false,
+                draggable: true
             };
         }
 

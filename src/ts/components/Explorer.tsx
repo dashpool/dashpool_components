@@ -303,7 +303,7 @@ const Explorer = (props: ExplorerProps) => {
 
     const handleDrop = (ev: DragEvent) => {
 
-      if (sharedData && sharedData.dragElement && sharedData.dragElement.parent != id) {
+      if (sharedData && sharedData.dragElement && sharedData.dragElement.parent != id && sharedData.dragElement.id) {
 
         const element = sharedData.dragElement;
         // Handle the drop event here
