@@ -109,7 +109,7 @@ const History = (props: HistoryProps) => {
             // Handle the response data here if needed
             updateSharedData({
               dragElement: {
-                id: id, type: "a", label: label, parent: "history", "app": label, "frame": frame
+                id: id, type: "a", label: label, parent: "history", "app": label, "frame": frame, layout: id
               }
             });
           })

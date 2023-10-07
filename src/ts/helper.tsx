@@ -11,6 +11,7 @@ type TreeViewNode = {
     frame?: string;
     data?: any;
     parent?: string;
+    layout?: string;
 }
 
 
