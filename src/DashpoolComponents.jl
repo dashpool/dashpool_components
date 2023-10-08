@@ -3,7 +3,7 @@ module DashpoolComponents
 using Dash
 
 const resources_path = realpath(joinpath( @__DIR__, "..", "deps"))
-const version = "0.0.8"
+const version = "0.0.10"
 
 include("jl/''_dashpoolprovider.jl")
 include("jl/''_explorer.jl")
@@ -19,14 +19,14 @@ function __init__()
             [
                 DashBase.Resource(
     relative_package_path = "dashpool_components.js",
-    external_url = "https://unpkg.com/dashpool_components@0.0.8/dashpool_components/dashpool_components.js",
+    external_url = "https://unpkg.com/dashpool_components@0.0.10/dashpool_components/dashpool_components.js",
     dynamic = nothing,
     async = nothing,
     type = :js
 ),
 DashBase.Resource(
     relative_package_path = "dashpool_components.js.map",
-    external_url = "https://unpkg.com/dashpool_components@0.0.8/dashpool_components/dashpool_components.js.map",
+    external_url = "https://unpkg.com/dashpool_components@0.0.10/dashpool_components/dashpool_components.js.map",
     dynamic = true,
     async = nothing,
     type = :js

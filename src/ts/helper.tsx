@@ -94,8 +94,6 @@ function findTreeViewNode(nodes: TreeViewNode[], idToFind: string): TreeViewNode
 function buildExplorerTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
     const treeMap = new Map<string, TreeNode>();
 
-
-
     // Create the root node
     const rootNode: TreeNode = {
         id: 'h',
@@ -120,7 +118,10 @@ function buildExplorerTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
 
     const unprocessedNodes = [...treeViewNodes];
 
-    while (unprocessedNodes.length > 0) {
+    let tries = 100;
+
+    while (unprocessedNodes.length > 0 && tries > 0) {
+        tries = tries - 1;
         for (let i = 0; i < unprocessedNodes.length; i++) {
             const node = unprocessedNodes[i];
             const treeNode: TreeNode = {
@@ -134,19 +135,22 @@ function buildExplorerTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
                 draggable: true,
             };
 
-            // Store the TreeNode in the map
-            treeMap.set(node.id, treeNode);
+
 
             // Check if the node has a parent
             if (node.parent && node.parent != "h") {
                 // Find the parent TreeNode in the map
                 const parentTreeNode = treeMap.get(node.parent);
+                
 
                 // Add the current node to the parent's children
                 if (parentTreeNode) {
                     parentTreeNode.children.push(treeNode);
                     unprocessedNodes.splice(i, 1); // Remove the processed node
                     i--; // Decrement i to account for the removed node
+
+                    // Store the TreeNode in the map
+                    treeMap.set(node.id, treeNode);                    
                 }
             } else {
                 // If the node doesn't have a parent, it belongs to either sharedNode or rootNode
@@ -156,10 +160,16 @@ function buildExplorerTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
                     sharedNode.children.push(treeNode); // Add to sharedNode
                     unprocessedNodes.splice(i, 1); // Remove the processed node
                     i--; // Decrement i to account for the removed node
+
+                    // Store the TreeNode in the map
+                    treeMap.set(node.id, treeNode);
                 } else {
                     rootNode.children.push(treeNode); // Add to rootNode
                     unprocessedNodes.splice(i, 1); // Remove the processed node
                     i--; // Decrement i to account for the removed node
+
+                    // Store the TreeNode in the map
+                    treeMap.set(node.id, treeNode);                    
                 }
             }
         }

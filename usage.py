@@ -2,24 +2,100 @@ import dash
 import dash_lumino_components as dlc
 import dash_express_components as dxc
 from dash import html, dcc, Input, Output
+import json
 
 import dashpool_components
 import json
 import random
 
-explorerNodes = [
-    {"id": "1", "type": "f", "label": "Folder1", "parent": "h"},
-    {"id": "2", "type": "f", "label": "Folder2"},
-    {"id": "11", "type": "p", "label": "Plot1", "parent": "1", "app": "egal", "data": {"immergut": 1}},
-    {"id": "12", "type": "r", "label": "Report1", "parent": "2"},
-    {"id": "13", "type": "a", "label": "Appstate1", "parent": "2"},
-    {"id": "useridvk", "type": "s", "label": "viktor@krueckl.de"},
-    {"id": "50", "type": "p", "label": "PlotVK", "parent": "useridvk"},
-    {"id": "101", "type": "f", "label": "FolderVK", "parent": "useridvk"},
-    {"id": "51", "type": "r", "label": "ReportVK", "parent": "101"},
-    {"id": "234", "type": "s", "label": "MK"},
-    {"id": "lnafs85tqp8627eptjo", "type": "a", "label": "AppstateNew", "parent": "h", "app": "tango", "frame": "Frame1"}
-]
+explorerNodes = json.loads("""
+            [
+                {
+                    "id": "lnhgx688h8funexyfv5",
+                    "email": null,
+                    "label": "Test",
+                    "parent": "lnhgzwtog5zsk3zk7ii",
+                    "type": "f"
+                },
+                {
+                    "id": "lnhgzwtog5zsk3zk7ii",
+                    "email": null,
+                    "label": "Viktor",
+                    "parent": "h",
+                    "type": "f"
+                },
+                {
+                    "id": "lnhh6q2heapfci0uc0o",
+                    "email": null,
+                    "label": "A",
+                    "parent": "lnhh6v1l1i0jp7r6vpei",
+                    "type": "f"
+                },
+                {
+                    "id": "lnhh6v1l1i0jp7r6vpei",
+                    "email": null,
+                    "label": "B",
+                    "parent": "h",
+                    "type": "f"
+                },
+                {
+                    "id": "lnhgn6u7ytnrhipilto",
+                    "app": "example",
+                    "data": {
+                        "url": "\u002fexample\u002f_dash-update-component",
+                        "request": {
+                            "output": "graph-content.figure",
+                            "outputs": {
+                                "id": "graph-content",
+                                "property": "figure"
+                            },
+                            "inputs": [
+                                {
+                                    "id": "dropdown-selection",
+                                    "property": "value",
+                                    "value": "Canada"
+                                }
+                            ],
+                            "changedPropIds": []
+                        },
+                        "output": "graph-content.figure"
+                    },
+                    "email": null,
+                    "frame": "lnhehq2gn6qz766iupd",
+                    "label": "Schnappi",
+                    "parent": "lnhgx688h8funexyfv5",
+                    "type": "p"
+                },
+                {
+                    "id": "lnhgxw8qcfdqdmivu3q",
+                    "app": "example",
+                    "data": {
+                        "url": "\u002fexample\u002f_dash-update-component",
+                        "request": {
+                            "output": "graph-content.figure",
+                            "outputs": {
+                                "id": "graph-content",
+                                "property": "figure"
+                            },
+                            "inputs": [
+                                {
+                                    "id": "dropdown-selection",
+                                    "property": "value",
+                                    "value": "Canada"
+                                }
+                            ],
+                            "changedPropIds": []
+                        },
+                        "output": "graph-content.figure"
+                    },
+                    "email": null,
+                    "frame": "lnhehq2gn6qz766iupd",
+                    "label": "Super",
+                    "parent": "lnhgx688h8funexyfv5",
+                    "type": "p"
+                }
+            ]
+""")
 
 historyNodes = [
     {"id": "12311", "type": "p", "label": "Plot1", "parent": "1", "app": "tango", "frame": "Frame1", "data": {"super": 1}},
@@ -27,7 +103,7 @@ historyNodes = [
 ]
 
 
-random.shuffle(explorerNodes)
+
 
 menu = dlc.Menu([
             dlc.Command(id={"type": "openapp", "url": "https://localhost:443/example/"},
