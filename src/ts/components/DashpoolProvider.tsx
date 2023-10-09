@@ -95,9 +95,9 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       if (messageData.type === 'fetchError') {
         // Show PrimeReact Toast with the message
 
-        // if (messageData.staus == 401) {
-        //   setShowLoginModal(true);
-        // }
+        if (messageData.staus == 401) {
+          setShowLoginModal(true);
+        }
 
         toast.current?.show({ severity: "warn", summary: messageData.message, detail: messageData.url, life: 3000 });
       }
