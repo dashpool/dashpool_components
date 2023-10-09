@@ -1,6 +1,6 @@
 // DashpoolContext.tsx
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-
+import React, { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react';
+import { Toast } from 'primereact/toast';
 
 type AppInfo = {
   id: string,
@@ -45,16 +45,45 @@ type DashpoolProviderProps = {
 const DashpoolProvider = (props: DashpoolProviderProps) => {
   const { children } = props;
   const [sharedData, setSharedData] = useState<SharedData>({});
+  const toast = useRef<Toast>(null);
 
   const updateSharedData = (newData: SharedData) => {
     setSharedData({ ...sharedData, ...newData });
   };
 
+  useEffect(() => {
+    // Add event listener for the message event
+    const messageEventListener = (event: MessageEvent) => {
+      const messageData = event.data;
+
+      // Check if the message has the type "fetchError"
+      if (messageData.type === 'fetchError') {
+        // Show PrimeReact Toast with the message
+
+        toast.current?.show({ severity: "warn", summary: messageData.message, detail: JSON.stringify(messageData), life: 3000 });
+      }
+    };
+
+    navigator.serviceWorker.addEventListener('message', messageEventListener);
+    window.addEventListener('message', messageEventListener);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      navigator.serviceWorker.removeEventListener('message', messageEventListener);
+      window.removeEventListener('message', messageEventListener);
+    };
+  }, []); // Empty dependency array means this effect runs once on component mount
 
   return (
-    <DashpoolContext.Provider value={{ sharedData, updateSharedData }}>
-      {children}
-    </DashpoolContext.Provider>
+    <div>
+      {/* Your other content here */}
+      <DashpoolContext.Provider value={{ sharedData, updateSharedData }}>
+        {children}
+      </DashpoolContext.Provider>
+
+      {/* PrimeReact Toast */}
+      <Toast ref={toast} position="bottom-right" />
+    </div>
   );
 };
 
