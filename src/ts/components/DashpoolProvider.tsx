@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react';
 import { Toast } from 'primereact/toast';
 import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
 
 type AppInfo = {
   id: string,
@@ -57,24 +58,45 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   const initLogin = () => {
+
     // Get the current URL
     const currentUrl = window.location.href;
 
     // Construct the URL for the OAuth2 proxy login
     const oauth2StartUrl = `/oauth2/start?rd=${encodeURIComponent(currentUrl)}`;
 
+    // Define popup window options
+    const popupWindowOptions = 'width=800,height=600,resizable=no,scrollbars=no';
+
     // Attempt to open a popup window for OAuth2 login
-    const popupWindow = window.open(oauth2StartUrl, 'OAuth2 Login', 'width=600,height=400');
+    const popupWindow = window.open(oauth2StartUrl, 'OAuth2 Login', popupWindowOptions);
 
     if (popupWindow) {
-      // Add an event listener to handle when the popup window is closed
-      popupWindow.addEventListener('beforeunload', () => {
-        setShowLoginModal(false);
+
+      // Handle errors gracefully, if necessary
+      popupWindow.onerror = (error) => {
+        console.error('OAuth2 popup error:', error);
+
+        toast.current?.show({ severity: "error", summary: 'OAuth2 popup error', detail: error, life: 3000 });
+      };
+
+      popupWindow.addEventListener("message", (event) => {
+        // Validate the message origin to prevent security risks
+        if (event.origin === '<trusted_origin>') {
+          if (event.data === "locationChange") {
+            if (popupWindow.location.href === currentUrl) {
+              popupWindow.close();
+              setShowLoginModal(false);
+            }
+          }
+          // Handle other messages from the popup if needed
+        }
       });
     } else {
       // If the browser blocks the popup, perform a redirect instead
       window.location.href = oauth2StartUrl;
     }
+
   }
 
 
@@ -130,13 +152,13 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
         modal={true}
         footer={
           <div>
-            <button onClick={initLogin}>OK</button>
-            <button onClick={onHide}>Cancel</button>
+            <Button onClick={initLogin} className="p-button-primary">OK</Button>
+            <Button onClick={onHide} className="p-button-secondary">Cancel</Button>
           </div>
         }
       >
         Do you want to log in?
-      </Dialog> 
+      </Dialog>
 
     </div>
   );
