@@ -81,15 +81,9 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       };
 
       popupWindow.addEventListener("message", (event) => {
-        // Validate the message origin to prevent security risks
-        if (event.origin === '<trusted_origin>') {
-          if (event.data === "locationChange") {
-            if (popupWindow.location.href === currentUrl) {
-              popupWindow.close();
-              setShowLoginModal(false);
-            }
-          }
-          // Handle other messages from the popup if needed
+        if (popupWindow.location.href === currentUrl) {
+          popupWindow.close();
+          setShowLoginModal(false);
         }
       });
     } else {
