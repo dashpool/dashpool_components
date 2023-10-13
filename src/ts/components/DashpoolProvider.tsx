@@ -172,7 +172,7 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       </DashpoolContext.Provider>
 
       {/* PrimeReact Toast */}
-      <Toast ref={toast} position="bottom-right" />
+      <Toast ref={toast} position="bottom-right" style={{ zIndex: 5000 }} />
 
       <Dialog
         visible={showLoginModal}

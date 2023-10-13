@@ -98,37 +98,40 @@ explorerNodes = json.loads("""
 """)
 
 
-
-
-
-apps = [{"name": "test", "group": "Widgets", "icon": "fa fa-plus", "url": "https://localhost:443/example/" }]
+apps = [{"name": "test", "group": "Widgets", "icon": "fa fa-plus",
+         "url": "https://localhost:443/example/"}]
 frames = [
-  {"id": "frame1", "name": "test", "group": "Widgets", "icon": "fa fa-plus", "url": "https://localhost:443/example/" },
-  {"id": "frame2", "name": "test", "group": "Widgets", "icon": "fa fa-plus", "url": "https://localhost:443/example/" }
+    {"id": "frame1", "name": "test (2)", "group": "Widgets",
+        "icon": "fa fa-plus", "url": "https://localhost:443/example/"},
+    {"id": "frame2", "name": "test (2)", "group": "Widgets",
+        "icon": "fa fa-plus", "url": "https://localhost:443/example/"}
 ]
 
 historyNodes = [
-    {"id": "12311", "type": "p", "label": "Plot1", "parent": "1", "app": apps[0], "frame": "frame1", "data": {"super": 1}},
-    {"id": "12313", "type": "a", "label": "Appstate1", "parent": "2", "app": apps[0], "frame": "frame1"}
+    {"id": "12311", "type": "p", "label": "Plot1", "parent": "1", "frame": "frame1", "data": {"url":  "https://localhost:443/example/_dash-update-component"}},
+    {"id": "12313", "type": "a", "label": "Appstate1", "parent": "2", "frame": "frame1123",
+        "data": {"url":  "https://localhost:443/example/_dash-update-component"}}
 ]
 
 menu = dlc.Menu([
-            dlc.Command(id={"type": "openapp", "url": "https://localhost:443/example/"},
-                        label="test", icon="fa fa-plus"),
-        ], id="openMenu", title="Widgets")
+    dlc.Command(id={"type": "openapp", "url": "https://localhost:443/example/"},
+                label="test", icon="fa fa-plus"),
+], id="openMenu", title="Widgets")
 
-layout = lambda: dashpool_components.DashpoolProvider([
+
+def layout(): return dashpool_components.DashpoolProvider([
     dcc.Interval(id='userupdate', interval=20000, n_intervals=0),
     dlc.MenuBar(menu, 'menuBar'),
     dlc.BoxPanel([
         dlc.SplitPanel([
             dlc.TabPanel(
                  [
-                    dlc.Panel(id="tab-a", children=[
-                        dashpool_components.Explorer(id='explorer', nodes=explorerNodes),
-                         
-                    ],
-                    label="Explorer", icon="far fa-clone"),
+                     dlc.Panel(id="tab-a", children=[
+                         dashpool_components.Explorer(
+                             id='explorer', nodes=explorerNodes),
+
+                     ],
+                         label="Explorer", icon="far fa-clone"),
 
                  ],
                  id='tab-panel-left',
@@ -136,14 +139,16 @@ layout = lambda: dashpool_components.DashpoolProvider([
                  allowDeselect=True),
 
             dlc.DockPanel([
-               dlc.Widget([
-                   
-                    html.Button('Clear Explorer', id='clear-exp-btn', n_clicks=0),
-                    html.Button('Clear History', id='clear-hist-btn', n_clicks=0),
+                dlc.Widget([
+
+                    html.Button('Clear Explorer',
+                                id='clear-exp-btn', n_clicks=0),
+                    html.Button('Clear History',
+                                id='clear-hist-btn', n_clicks=0),
                     html.Div("", id='state-json')
 
 
-                    ], id="d0", title="Extra"),
+                ], id="d0", title="Extra"),
 
 
 
@@ -158,36 +163,36 @@ layout = lambda: dashpool_components.DashpoolProvider([
                     html.Div(id="historyRefreshed"),
 
 
-                    ], id="d1", title="Events"),
+                ], id="d1", title="Events"),
 
 
 
-               dlc.Widget([
-                   
+                dlc.Widget([
+
                     dashpool_components.Loader(
-                        id="loader", 
+                        id="loader",
                         url="https://localhost/example/_dash-update-component",
                         request={
-                            "output": 'graph-content.figure',
-                            "outputs": {
-                                "property": 'figure',
-                                "id": 'graph-content'
-                            },
+                           "output": 'graph-content.figure',
+                           "outputs": {
+                               "property": 'figure',
+                               "id": 'graph-content'
+                           },
                             "inputs": [
-                                {
-                                    "id": 'dropdown-selection',
-                                    "property": 'value',
-                                    "value": 'Canada'
-                                }
-                            ],
+                               {
+                                   "id": 'dropdown-selection',
+                                   "property": 'value',
+                                   "value": 'Canada'
+                               }
+                           ],
                             "changedPropIds": []
                         },
                         output="graph-content.figure"
 
-                        
-                        )
 
-                    ], id="dl", title="Loader"),
+                    )
+
+                ], id="dl", title="Loader"),
 
 
             ], id="dock-panel"),
@@ -195,7 +200,8 @@ layout = lambda: dashpool_components.DashpoolProvider([
             dlc.TabPanel(
                 [
                     dlc.Panel(id="tab-h", children=[
-                        dashpool_components.History(id="history", nodes=historyNodes)
+                        dashpool_components.History(
+                            id="history", nodes=historyNodes)
                     ], label="History", icon="fa fa-clock-rotate-left"),
 
                 ],
@@ -235,7 +241,6 @@ def print_output(input):
 )
 def print_output(input):
     return json.dumps(input)
-
 
 
 @app.callback(
@@ -279,8 +284,6 @@ def clear_exp(input):
 def clear_exp(input):
     return json.dumps(input)
 
+
 if __name__ == '__main__':
     app.run_server(debug=True)
-
-
-

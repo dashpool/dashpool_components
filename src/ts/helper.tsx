@@ -2,13 +2,14 @@
 import { TreeNode } from 'primereact/treenode';
 import { FrameInfo, AppInfo } from './components/DashpoolProvider';
 
+
+
 type TreeViewNode = {
     id: string;
     type: string;
     label: string;
     shared?: string[];
     icon?: string;
-    app?: string;
     frame?: string;
     data?: any;
     parent?: string;
@@ -200,16 +201,43 @@ function buildExplorerTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
 
 
 
-function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[]): TreeNode[] {
+function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[], appInfo: AppInfo[]): TreeNode[] {
     const frameGroups: { [key: string]: TreeNode } = {};
 
     treeViewNodes.forEach((node) => {
         const frame = node.frame || 'NoFrame';
+        
+        const url = node.data.url;
+        const baseurl = url.slice(0, url.lastIndexOf('/') + 1);
 
-        const machingInfo = frameInfo.filter((el) => el.id === frame);
-        const app_name = (machingInfo.length > 0) ? machingInfo[0].name : node.app || 'NoApp';
-        const app_icon = (machingInfo.length > 0) ? machingInfo[0].icon : node.icon || 'fa-solid fa-cube';
-        const app_data = (machingInfo.length > 0) ? machingInfo : {}
+        const matchingFrameInfo = frameInfo.filter((el) => el.id === frame);
+        const matchingAppInfo = appInfo.filter((el) => el.url === baseurl);
+
+
+        const app_name = matchingFrameInfo.length > 0
+            ? matchingFrameInfo[0].name
+            : matchingAppInfo.length > 0
+                ? matchingAppInfo[0].name
+                : 'NoApp';
+
+        const app_icon = matchingFrameInfo.length > 0
+            ? matchingFrameInfo[0].icon
+            : matchingAppInfo.length > 0
+                ? matchingAppInfo[0].icon
+                : 'fa-solid fa-cube';
+
+        const app_data = matchingFrameInfo.length > 0 
+            ? matchingFrameInfo[0]
+            : matchingAppInfo.length > 0
+                ? matchingAppInfo[0]
+                : {};
+
+        const node_style = matchingFrameInfo.length > 0
+            ? {}
+            : matchingAppInfo.length > 0
+                ? { color: "#a1a1a1", background: "#f5f5f5" }
+                : { color: "#a1a1a1", background: "#f5f5f5" };
+
 
         if (!frameGroups[frame]) {
             frameGroups[frame] = {
@@ -220,7 +248,8 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[])
                 children: [],
                 droppable: false,
                 draggable: true,
-                data: app_data
+                data: app_data,
+                style: node_style
             };
         }
 
@@ -228,11 +257,11 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[])
             id: node.id,
             key: node.type + '-' + node.id,
             label: node.label,
-            data: node.data,
+            data: {...app_data, ...node.data},
             icon: iconMapping[node.type],
             children: [],
             droppable: false,
-            draggable: true,
+            draggable: true
         };
 
         frameGroups[frame].children.push(treeNode);

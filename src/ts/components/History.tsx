@@ -51,7 +51,7 @@ const History = (props: HistoryProps) => {
 
 
 
-  let tree = buildHistoryTree(nodes, sharedData.frames || []);
+  let tree = buildHistoryTree(nodes, sharedData.frames || [], sharedData.apps || []);
   const [internalNodes, setInternalNodes] = useState(tree);
 
   const cm = useRef<ContextMenu>(null);
@@ -72,7 +72,7 @@ const History = (props: HistoryProps) => {
   };
 
   useEffect(() => {
-    setInternalNodes(buildHistoryTree(nodes, sharedData.frames || []));
+    setInternalNodes(buildHistoryTree(nodes, sharedData.frames || [], sharedData.apps || []));
   }, [props.nodes])
 
 
@@ -83,11 +83,9 @@ const History = (props: HistoryProps) => {
       const target = ev.target as HTMLElement;
 
       const internalNode = findTargetElement(container, target, internalNodes);
-      console.log(internalNode);
       const node = nodes.filter((el) => el.id === internalNode.id)[0];
 
       if (internalNode && !node) {
-        console.log("need to create node", internalNode);
 
         const id = generateUniqueId();
         const frame = internalNode["id"];
@@ -114,7 +112,7 @@ const History = (props: HistoryProps) => {
             }
             return response.json(); // Parse the response JSON
           })
-          .then(data => {
+          .then(_ => {
             // Handle the response data here if needed
             updateSharedData({
               dragElement: {
@@ -129,6 +127,7 @@ const History = (props: HistoryProps) => {
 
 
       } else if (node) {
+        node.data = {...internalNode.data, ...node.data};
         updateSharedData({ dragElement: { ...node, "parent": id } });
       } else {
         updateSharedData({ dragElement: {} });
