@@ -104,7 +104,7 @@ historyNodes = [
 
 
 
-
+apps = [{"name": "test", "group": "Widgets", "icon": "fa fa-plus", "url": "https://localhost:443/example/" }]
 menu = dlc.Menu([
             dlc.Command(id={"type": "openapp", "url": "https://localhost:443/example/"},
                         label="test", icon="fa fa-plus"),
@@ -133,6 +133,7 @@ layout = lambda: dashpool_components.DashpoolProvider([
                    
                     html.Button('Clear Explorer', id='clear-exp-btn', n_clicks=0),
                     html.Button('Clear History', id='clear-hist-btn', n_clicks=0),
+                    html.Div("", id='state-json')
 
 
                     ], id="d0", title="Extra"),
@@ -197,7 +198,7 @@ layout = lambda: dashpool_components.DashpoolProvider([
 
         ], id="splitPanel")
     ], "boxPanel", addToDom=True)
-])
+], id="context", initialData={"apps": apps})
 
 
 app = dash.Dash(__name__)
@@ -262,6 +263,14 @@ def clear_hist(input):
 )
 def clear_exp(input):
     return []
+
+
+@app.callback(
+    Output("state-json", "children"),
+    Input("context", "sharedData")
+)
+def clear_exp(input):
+    return json.dumps(input)
 
 if __name__ == '__main__':
     app.run_server(debug=True)

@@ -5,15 +5,23 @@ import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 
 type AppInfo = {
-  id: string,
+  name: string,
+  group: string,
   url: string,
+  icon: string
+}
+
+type FrameInfo = {
+  name: string,
+  id: string,
   icon: string
 }
 
 // Define the type for the shared data
 type SharedData = {
   dragElement?: any,
-  apps?: AppInfo[]
+  apps?: AppInfo[],
+  frames?: FrameInfo[]
 };
 
 // Define the context type
@@ -26,6 +34,11 @@ const DashpoolContext = createContext<DashpoolContextType | undefined>(undefined
 
 type DashpoolProviderProps = {
   /**
+   * Unique ID to identify this component in Dash callbacks.
+   */
+  id: string;
+
+  /**
   * Array of children
   */
   children: ReactNode[];
@@ -34,6 +47,16 @@ type DashpoolProviderProps = {
    * The last drag element
    */
   dragElement?: any;
+
+  /**
+   * The initial state for the user. Note! Not everything is reactive
+   */
+  initialData?: any;
+
+  /**
+   * the shared data
+   */
+  sharedData?: SharedData;
 
   /**
    * Update props to trigger callbacks.
@@ -46,12 +69,22 @@ type DashpoolProviderProps = {
  */
 const DashpoolProvider = (props: DashpoolProviderProps) => {
   const { children } = props;
-  const [sharedData, setSharedData] = useState<SharedData>({});
+  const [sharedData, setSharedData] = useState<SharedData>({ ...props.initialData });
   const toast = useRef<Toast>(null);
 
   const updateSharedData = (newData: SharedData) => {
-    setSharedData({ ...sharedData, ...newData });
+    const newSharedData = { ...sharedData, ...newData }
+    if (props.setProps) {
+      props.setProps({ sharedData: newSharedData });
+    }
+    setSharedData(newSharedData);
   };
+
+  useEffect(() => {
+    if (props.setProps) {
+      props.setProps({ sharedData: sharedData });
+    }
+  }, [sharedData, props.initialData]);
 
 
   // /// LOGIN section
