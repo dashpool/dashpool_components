@@ -97,14 +97,21 @@ explorerNodes = json.loads("""
             ]
 """)
 
-historyNodes = [
-    {"id": "12311", "type": "p", "label": "Plot1", "parent": "1", "app": "tango", "frame": "Frame1", "data": {"super": 1}},
-    {"id": "12313", "type": "a", "label": "Appstate1", "parent": "2", "app": "tango", "frame": "Frame1"}
-]
+
 
 
 
 apps = [{"name": "test", "group": "Widgets", "icon": "fa fa-plus", "url": "https://localhost:443/example/" }]
+frames = [
+  {"id": "frame1", "name": "test", "group": "Widgets", "icon": "fa fa-plus", "url": "https://localhost:443/example/" },
+  {"id": "frame2", "name": "test", "group": "Widgets", "icon": "fa fa-plus", "url": "https://localhost:443/example/" }
+]
+
+historyNodes = [
+    {"id": "12311", "type": "p", "label": "Plot1", "parent": "1", "app": apps[0], "frame": "frame1", "data": {"super": 1}},
+    {"id": "12313", "type": "a", "label": "Appstate1", "parent": "2", "app": apps[0], "frame": "frame1"}
+]
+
 menu = dlc.Menu([
             dlc.Command(id={"type": "openapp", "url": "https://localhost:443/example/"},
                         label="test", icon="fa fa-plus"),
@@ -198,7 +205,7 @@ layout = lambda: dashpool_components.DashpoolProvider([
 
         ], id="splitPanel")
     ], "boxPanel", addToDom=True)
-], id="context", initialData={"apps": apps})
+], id="context", initialData={"apps": apps, "frames": frames})
 
 
 app = dash.Dash(__name__)

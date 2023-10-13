@@ -8,7 +8,7 @@ import { MenuItem } from 'primereact/menuitem';
 import { Button } from 'primereact/button';
 import { useDashpoolData } from './DashpoolProvider';
 
-import { setDashpoolEvent, DashpoolEvent, TreeViewNode, findTreeViewNode, buildHistoryTree, findTargetElement, generateUniqueId, iconMapping } from '../helper';
+import { setDashpoolEvent, DashpoolEvent, TreeViewNode, findTreeViewNode, buildHistoryTree, findTargetElement, generateUniqueId } from '../helper';
 
 
 
@@ -49,7 +49,9 @@ const History = (props: HistoryProps) => {
 
   const [nRefreshed, setNRefreshed] = useState(props.n_refreshed || 0);
 
-  let tree = buildHistoryTree(nodes);
+
+
+  let tree = buildHistoryTree(nodes, sharedData.frames || []);
   const [internalNodes, setInternalNodes] = useState(tree);
 
   const cm = useRef<ContextMenu>(null);
@@ -70,7 +72,7 @@ const History = (props: HistoryProps) => {
   };
 
   useEffect(() => {
-    setInternalNodes(buildHistoryTree(nodes));
+    setInternalNodes(buildHistoryTree(nodes, sharedData.frames || []));
   }, [props.nodes])
 
 
@@ -90,6 +92,7 @@ const History = (props: HistoryProps) => {
         const id = generateUniqueId();
         const frame = internalNode["id"];
         const label = internalNode["label"];
+        const data = internalNode["data"]
 
 
         fetch("/backend/savelayout", {
@@ -97,10 +100,16 @@ const History = (props: HistoryProps) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ id: id, frame: frame, label: label, app: label }), // Serialize the object to JSON
+          body: JSON.stringify({ id: id, frame: frame, label: label, app: data }), // Serialize the object to JSON
         })
           .then(response => {
             if (!response.ok) {
+              window.postMessage({
+                type: "fetchError",
+                status: response.status,
+                message: 'Save layout failed with status ' + response.status,
+                url: "/backend/savelayout"
+              });
               throw new Error("Network response was not ok");
             }
             return response.json(); // Parse the response JSON
@@ -109,7 +118,7 @@ const History = (props: HistoryProps) => {
             // Handle the response data here if needed
             updateSharedData({
               dragElement: {
-                id: id, type: "a", label: label, parent: "history", "app": label, "frame": frame, layout: id
+                id: id, type: "a", label: label, parent: "history", "app": data, "frame": frame, layout: id
               }
             });
           })
@@ -176,10 +185,7 @@ const History = (props: HistoryProps) => {
         className='p-tree-reload'
       />
 
-
-
     </div>
-
   )
 }
 

@@ -14,7 +14,9 @@ type AppInfo = {
 type FrameInfo = {
   name: string,
   id: string,
-  icon: string
+  icon: string,
+  group: string,
+  url: string
 }
 
 // Define the type for the shared data
@@ -202,5 +204,5 @@ const useDashpoolData = (): DashpoolContextType => {
 
 DashpoolProvider.defaultProps = {};
 
-export { useDashpoolData };
+export { useDashpoolData, FrameInfo, AppInfo };
 export default DashpoolProvider;

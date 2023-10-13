@@ -1,5 +1,6 @@
 
 import { TreeNode } from 'primereact/treenode';
+import { FrameInfo, AppInfo } from './components/DashpoolProvider';
 
 type TreeViewNode = {
     id: string;
@@ -30,8 +31,7 @@ const newDashpoolEvent = (type: string, data: any): DashpoolEvent => {
 }
 
 const setDashpoolEvent = (type: string, data: any, setProps: any) => {
-    if(setProps)
-    {
+    if (setProps) {
         setProps({ dashpoolEvent: newDashpoolEvent(type, data) });
     }
 }
@@ -141,7 +141,7 @@ function buildExplorerTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
             if (node.parent && node.parent != "h") {
                 // Find the parent TreeNode in the map
                 const parentTreeNode = treeMap.get(node.parent);
-                
+
 
                 // Add the current node to the parent's children
                 if (parentTreeNode) {
@@ -150,7 +150,7 @@ function buildExplorerTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
                     i--; // Decrement i to account for the removed node
 
                     // Store the TreeNode in the map
-                    treeMap.set(node.id, treeNode);                    
+                    treeMap.set(node.id, treeNode);
                 }
             } else {
                 // If the node doesn't have a parent, it belongs to either sharedNode or rootNode
@@ -169,7 +169,7 @@ function buildExplorerTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
                     i--; // Decrement i to account for the removed node
 
                     // Store the TreeNode in the map
-                    treeMap.set(node.id, treeNode);                    
+                    treeMap.set(node.id, treeNode);
                 }
             }
         }
@@ -200,20 +200,27 @@ function buildExplorerTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
 
 
 
-function buildHistoryTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
+function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[]): TreeNode[] {
     const frameGroups: { [key: string]: TreeNode } = {};
 
     treeViewNodes.forEach((node) => {
         const frame = node.frame || 'NoFrame';
+
+        const machingInfo = frameInfo.filter((el) => el.id === frame);
+        const app_name = (machingInfo.length > 0) ? machingInfo[0].name : node.app || 'NoApp';
+        const app_icon = (machingInfo.length > 0) ? machingInfo[0].icon : node.icon || 'fa-solid fa-cube';
+        const app_data = (machingInfo.length > 0) ? machingInfo : {}
+
         if (!frameGroups[frame]) {
             frameGroups[frame] = {
                 id: frame,
                 key: frame,
-                label: node.app || 'NoApp',
-                icon: 'fa-solid fa-cube',
+                label: app_name,
+                icon: app_icon,
                 children: [],
                 droppable: false,
-                draggable: true
+                draggable: true,
+                data: app_data
             };
         }
 
