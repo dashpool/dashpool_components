@@ -130,16 +130,14 @@ const Explorer = (props: ExplorerProps) => {
         currentNode.label = label;
 
 
+        let node = findTreeViewNode(nodes, currentNode.id);
+        node.label = label;
 
-        setTimeout(
-          () => {
-            let node = findTreeViewNode(nodes, currentNode.id);
-            node.label = label;
+        const new_event = { nodeChangeEvent: { id: currentNode.id, label: label } };
 
-            setProps({ nodeChangeEvent: findTreeViewNode(nodes, currentNode.id) });
-          },
-          100
-        );
+        setTimeout(() => {
+          props.setProps(new_event)
+        }, 100);
 
       }
 
@@ -178,7 +176,7 @@ const Explorer = (props: ExplorerProps) => {
 
     let output: MenuItem[] = [];
     if (key.startsWith("a") || key.startsWith("p") || key.startsWith("r")) {
-      output.push({ label: 'Open', icon: 'fas fa-box-open', command: (e) =>  setDashpoolEvent("open", inputNode, setProps) });
+      output.push({ label: 'Open', icon: 'fas fa-box-open', command: (e) => setDashpoolEvent("open", inputNode, setProps) });
     }
 
     if (!key.startsWith("s") && !key.startsWith("h")) {
@@ -397,12 +395,13 @@ const Explorer = (props: ExplorerProps) => {
           let node = findTreeViewNode(nodes, e.dragNode.id);
           node.parent = parent;
 
-          setTimeout(
-            () => {
-              setProps({ nodeChangeEvent: findTreeViewNode(nodes, e.dragNode.id) });
-            },
-            100
-          );
+
+          const new_event = { nodeChangeEvent: { id: node.id, parent: parent } };
+
+          setTimeout(() => {
+            props.setProps(new_event)
+          }, 100);
+
 
         }}
         filter

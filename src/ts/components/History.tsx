@@ -116,7 +116,7 @@ const History = (props: HistoryProps) => {
             // Handle the response data here if needed
             updateSharedData({
               dragElement: {
-                id: id, type: "a", label: label, parent: "history", "app": data, "frame": frame, layout: id
+                id: id, type: "a", label: label, parent: "history", "data": { ...internalNode.data, ...node.data }, "frame": frame, layout: id
               }
             });
           })
@@ -127,7 +127,7 @@ const History = (props: HistoryProps) => {
 
 
       } else if (node) {
-        node.data = {...internalNode.data, ...node.data};
+        node.data = { ...internalNode.data, ...node.data };
         updateSharedData({ dragElement: { ...node, "parent": id } });
       } else {
         updateSharedData({ dragElement: {} });
