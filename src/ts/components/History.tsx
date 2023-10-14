@@ -90,7 +90,7 @@ const History = (props: HistoryProps) => {
         const id = generateUniqueId();
         const frame = internalNode["id"];
         const label = internalNode["label"];
-        const data = internalNode["data"]
+        const app_data = internalNode["app_data"]
 
 
         fetch("/backend/savelayout", {
@@ -98,7 +98,7 @@ const History = (props: HistoryProps) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ id: id, frame: frame, label: label, app: data }), // Serialize the object to JSON
+          body: JSON.stringify({ id: id, frame: frame, label: label, app: app_data }), // Serialize the object to JSON
         })
           .then(response => {
             if (!response.ok) {
