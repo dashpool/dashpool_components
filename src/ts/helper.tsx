@@ -206,7 +206,7 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
 
     treeViewNodes.forEach((node) => {
         const frame = node.frame || 'NoFrame';
-        
+
         const url = node.data.url;
         const baseurl = url.slice(0, url.lastIndexOf('/') + 1);
 
@@ -226,11 +226,11 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
                 ? matchingAppInfo[0].icon
                 : 'fa-solid fa-cube';
 
-        const app_data = matchingFrameInfo.length > 0 
-            ? matchingFrameInfo[0]
-            : matchingAppInfo.length > 0
-                ? matchingAppInfo[0]
-                : {};
+
+        const app_data = {
+            ...(matchingFrameInfo.length > 0 && matchingFrameInfo[0]),
+            ...(matchingAppInfo.length > 0 && matchingAppInfo[0])
+            };
 
         const node_style = matchingFrameInfo.length > 0
             ? {}
@@ -257,7 +257,7 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
             id: node.id,
             key: node.type + '-' + node.id,
             label: node.label,
-            data: {...app_data, ...node.data},
+            data: { ...app_data, ...node.data },
             icon: iconMapping[node.type],
             children: [],
             droppable: false,
