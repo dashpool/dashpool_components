@@ -90,8 +90,7 @@ const History = (props: HistoryProps) => {
         const id = generateUniqueId();
         const frame = internalNode["id"];
         const label = internalNode["label"];
-        const app_data = internalNode["app"]
-
+        const app_data = internalNode["data"]
 
         fetch("/backend/savelayout", {
           method: 'POST',
@@ -116,7 +115,7 @@ const History = (props: HistoryProps) => {
             // Handle the response data here if needed
             updateSharedData({
               dragElement: {
-                id: id, type: "a", label: label, parent: "history", "app": internalNode.app, "frame": frame, layout: id
+                id: id, type: "a", label: label, parent: "history", "app": app_data, "frame": frame, layout: id
               }
             });
           })
