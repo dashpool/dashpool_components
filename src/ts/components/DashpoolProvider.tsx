@@ -128,8 +128,8 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
           clearInterval(intervalId);
           popupWindow.close();
           setShowLoginModal(false);
-        } else if (popupWindow && popupWindow.location.href === oauth2StartUrl +  "kajsdlkfjsdf") {
-          clearInterval(intervalId); // Stop checking when the URL matches the expected URL
+        } else if (popupWindow && popupWindow.location.href === document.location.href) {
+          clearInterval(intervalId);
           popupWindow.close();
           setShowLoginModal(false);
         }
