@@ -121,6 +121,21 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
           setShowLoginModal(false);
         }
       });
+
+      const intervalId = setInterval(function () {
+        console.log(popupWindow.location.href);
+        if (popupWindow && popupWindow.closed) {
+          clearInterval(intervalId);
+          popupWindow.close();
+          setShowLoginModal(false);
+        } else if (popupWindow && popupWindow.location.href === oauth2StartUrl +  "kajsdlkfjsdf") {
+          clearInterval(intervalId); // Stop checking when the URL matches the expected URL
+          popupWindow.close();
+          setShowLoginModal(false);
+        }
+      }, 100);
+
+
     } else {
       // If the browser blocks the popup, perform a redirect instead
       window.location.href = oauth2StartUrl;
