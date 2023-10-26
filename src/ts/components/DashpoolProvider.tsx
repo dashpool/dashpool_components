@@ -123,7 +123,6 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       });
 
       const intervalId = setInterval(function () {
-        console.log(popupWindow.location.href);
         if (popupWindow && popupWindow.closed) {
           clearInterval(intervalId);
           popupWindow.close();
