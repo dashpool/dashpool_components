@@ -590,7 +590,7 @@ const Explorer = (props: ExplorerProps) => {
           <MultiSelect
             id="users"
             optionLabel="name" // Adjust this based on your user object structure
-            options={sharedData.users.map((user) => ({
+            options={sharedData?.users?.map((user) => ({
               name: user,
               id: user
             }))}
@@ -610,7 +610,7 @@ const Explorer = (props: ExplorerProps) => {
           <MultiSelect
             id="groups"
             optionLabel="name" // Adjust this based on your group object structure
-            options={sharedData.groups.map((group) => ({
+            options={sharedData?.groups?.map((group) => ({
               name: group.name,
               id: group.id
             }))}
