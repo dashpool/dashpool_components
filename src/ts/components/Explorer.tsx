@@ -12,6 +12,7 @@ import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { MultiSelect } from 'primereact/multiselect';
+import { SelectItem } from 'primereact/selectitem';
 
 
 import { useDashpoolData } from './DashpoolProvider';
@@ -340,6 +341,8 @@ const Explorer = (props: ExplorerProps) => {
   const [isSharingModalVisible, setSharingModalVisible] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+  const [optionsUsers, setOptionsUsers] = useState<SelectItem[]>([]);
+  const [optionsGroups, setOptionsGroups] = useState<SelectItem[]>([]);
 
   // Function to open the sharing modal and set the selected node
   const openSharingModal = (node: MenuItem) => {
@@ -347,10 +350,20 @@ const Explorer = (props: ExplorerProps) => {
 
     const sharedUsers = node.data?.shared_users || [];
     const sharedGroups = node.data?.shared_groups || [];
+    const oUsers: SelectItem[] = sharedData.users.map((user) => ({
+      label: user,
+      value: user
+    }));
+    const oGroups: SelectItem[] = sharedData.groups.map((group) => ({
+      label: group.name,
+      value: group.id
+    }));
 
     // Set the selected users and groups in the state
     setSelectedUsers(sharedUsers);
     setSelectedGroups(sharedGroups);
+    setOptionsUsers(oUsers);
+    setOptionsGroups(oGroups);
 
     setSharingModalVisible(true);
   };
@@ -589,18 +602,13 @@ const Explorer = (props: ExplorerProps) => {
           <label htmlFor="users" className='w-100'>Users</label>
           <MultiSelect
             id="users"
-            optionLabel="name" // Adjust this based on your user object structure
-            options={sharedData?.users?.map((user) => ({
-              name: user,
-              id: user
-            }))}
+            options={optionsUsers}
             value={selectedUsers}
             onChange={(e) => setSelectedUsers(e.value)}
             filter
             placeholder="Select Users"
             className='w-100'
             maxSelectedLabels={3}
-            optionValue='id'
           />
         </div>
 
@@ -609,18 +617,13 @@ const Explorer = (props: ExplorerProps) => {
           <label htmlFor="groups" className='w-100'>Groups</label>
           <MultiSelect
             id="groups"
-            optionLabel="name" // Adjust this based on your group object structure
-            options={sharedData?.groups?.map((group) => ({
-              name: group.name,
-              id: group.id
-            }))}
+            options={optionsGroups}
             value={selectedGroups}
             onChange={(e) => setSelectedGroups(e.value)}
             filter
             placeholder="Select Groups"
             className="w-100"
             maxSelectedLabels={3}
-            optionValue='id'
           />
         </div>
 
