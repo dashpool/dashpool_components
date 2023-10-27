@@ -19,11 +19,18 @@ type FrameInfo = {
   url: string
 }
 
+type UserGroup = {
+  name: string,
+  id: string
+}
+
 // Define the type for the shared data
 type SharedData = {
   dragElement?: any,
   apps?: AppInfo[],
-  frames?: FrameInfo[]
+  frames?: FrameInfo[],
+  users?: string[],
+  groups?: UserGroup[]
 };
 
 // Define the context type

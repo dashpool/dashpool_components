@@ -11,6 +11,8 @@ import { MenuItem } from 'primereact/menuitem';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
+import { MultiSelect } from 'primereact/multiselect';
+
 
 import { useDashpoolData } from './DashpoolProvider';
 import { setDashpoolEvent, DashpoolEvent, TreeViewNode, findTreeViewNode, buildExplorerTree, findTargetElement, generateUniqueId, findTreeNode } from '../helper';
@@ -163,6 +165,59 @@ const Explorer = (props: ExplorerProps) => {
 
 
 
+  const updateNodeSharing = (key: string, users: string[], groups: string[]) => {
+    // Function to recursively find and update the node
+
+    const findAndUpdateNode = (currentNode: TreeNode) => {
+      if (currentNode.key === key) {
+        // Update the node value
+
+        currentNode.data = currentNode.data ?? {};
+        currentNode.data["shared_users"] = users;
+        currentNode.data["shared_groups"] = groups;
+
+        const node_style = (
+          currentNode.data?.shared_users?.length || currentNode.data?.shared_groups?.length
+        ) ? { color: "#f5681b", fontWeight: 500 } : {};
+
+        currentNode.style = node_style;
+
+
+        let node = findTreeViewNode(nodes, currentNode.id);
+        node.data = node.data ?? {};
+        node.data["shared_users"] = users;
+        node.data["shared_groups"] = groups;
+
+        const new_event = { nodeChangeEvent: { id: currentNode.id, shared_groups: groups, shared_users: users } };
+
+        setTimeout(() => {
+          props.setProps(new_event)
+        }, 100);
+
+      }
+
+      if (currentNode.children) {
+        // Recursively check children
+        currentNode.children.forEach(childNode => {
+          findAndUpdateNode(childNode); // Recursively check children of children
+        });
+      }
+    };
+
+    // Clone the existing nodes array to avoid mutating the state directly
+    const updatedNodes = [...internalNodes];
+
+    // Find and update the node
+    findAndUpdateNode(updatedNodes[0]); // Only update your own components in home
+
+
+
+    // Update the state with the modified nodes array
+    setInternalNodes(updatedNodes);
+  };
+
+
+
 
   const setContextMenu = (node: TreeNode): boolean => {
     const key = node.key.toString();
@@ -180,7 +235,7 @@ const Explorer = (props: ExplorerProps) => {
     }
 
     if (!key.startsWith("s") && !key.startsWith("h")) {
-      output.push({ label: 'Share', icon: 'fas fa-share-alt' });
+      output.push({ label: 'Share', icon: 'fas fa-share-alt', command: (e) => openSharingModal(node) });
       output.push({ separator: true })
     }
 
@@ -240,9 +295,6 @@ const Explorer = (props: ExplorerProps) => {
   };
 
   // Function to handle folder creation and close the modal
-
-
-
   const handleCreateFolder = () => {
 
     let id = generateUniqueId();
@@ -282,6 +334,45 @@ const Explorer = (props: ExplorerProps) => {
   };
 
 
+
+  // START sharing modal stuff
+
+  const [isSharingModalVisible, setSharingModalVisible] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+
+  // Function to open the sharing modal and set the selected node
+  const openSharingModal = (node: MenuItem) => {
+    setSelectedNode(node);
+
+    const sharedUsers = node.data?.shared_users || [];
+    const sharedGroups = node.data?.shared_groups || [];
+
+    // Set the selected users and groups in the state
+    setSelectedUsers(sharedUsers);
+    setSelectedGroups(sharedGroups);
+
+    setSharingModalVisible(true);
+  };
+
+  // Function to close the sharing modal
+  const closeSharingModal = () => {
+    setSharingModalVisible(false);
+  };
+
+
+  // Function to handle saving the shared data
+  const handleSaveSharing = () => {
+    // Update the selectedNode with the selectedUsers and selectedGroups
+    updateNodeSharing(selectedNode.key,
+      selectedUsers,
+      selectedGroups)
+
+    // Close the sharing modal
+    closeSharingModal();
+  };
+
+  // END sharing modal stuff
 
 
 
@@ -361,6 +452,8 @@ const Explorer = (props: ExplorerProps) => {
 
 
 
+
+
   return (
     <div id={id} style={{ width: "100%", height: "100%" }}>
       {/* Node Context menu */}
@@ -420,6 +513,7 @@ const Explorer = (props: ExplorerProps) => {
 
       {/* Rename Modal */}
       <Dialog
+        style={{ width: '500px' }}
         visible={isRenameModalVisible}
         onHide={cancelRename}
         header="Rename"
@@ -439,12 +533,14 @@ const Explorer = (props: ExplorerProps) => {
           type="text"
           value={newLabel}
           onChange={(e) => setNewLabel(e.target.value)}
+          className='w-100'
         />
       </Dialog>
 
 
       {/* Create Folder Modal */}
       <Dialog
+        style={{ width: '500px' }}
         visible={isCreateFolderModalVisible}
         onHide={cancelCreateFolder}
         header="Create New Folder"
@@ -465,9 +561,71 @@ const Explorer = (props: ExplorerProps) => {
           value={newFolderName}
           onChange={(e) => setNewFolderName(e.target.value)}
           placeholder="Enter folder name"
+          className='w-100'
         />
       </Dialog>
 
+
+      {/* Share Modal */}
+      <Dialog
+        style={{ width: '500px' }}
+        visible={isSharingModalVisible}
+        onHide={closeSharingModal}
+        header={"Share " + selectedNode?.label}
+        modal
+        footer={
+          <div>
+            <Button onClick={handleSaveSharing} className="p-button-primary">
+              Save
+            </Button>
+            <Button onClick={closeSharingModal} className="p-button-secondary">
+              Cancel
+            </Button>
+          </div>
+        }
+      >
+        {/* MultiSelect for selecting users */}
+        <div className="p-field">
+          <label htmlFor="users" className='w-100'>Users</label>
+          <MultiSelect
+            id="users"
+            optionLabel="name" // Adjust this based on your user object structure
+            options={sharedData.users.map((user) => ({
+              name: user,
+              id: user
+            }))}
+            value={selectedUsers}
+            onChange={(e) => setSelectedUsers(e.value)}
+            filter
+            placeholder="Select Users"
+            className='w-100'
+            maxSelectedLabels={3}
+            optionValue='id'
+          />
+        </div>
+
+        {/* MultiSelect for selecting groups */}
+        <div className="p-field mt-3">
+          <label htmlFor="groups" className='w-100'>Groups</label>
+          <MultiSelect
+            id="groups"
+            optionLabel="name" // Adjust this based on your group object structure
+            options={sharedData.groups.map((group) => ({
+              name: group.name,
+              id: group.id
+            }))}
+            value={selectedGroups}
+            onChange={(e) => setSelectedGroups(e.value)}
+            filter
+            placeholder="Select Groups"
+            className="w-100"
+            maxSelectedLabels={3}
+            optionValue='id'
+          />
+        </div>
+
+
+      </Dialog>
 
 
     </div>

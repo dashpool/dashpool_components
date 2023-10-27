@@ -125,6 +125,12 @@ function buildExplorerTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
         tries = tries - 1;
         for (let i = 0; i < unprocessedNodes.length; i++) {
             const node = unprocessedNodes[i];
+
+            const node_style = (
+                node.data?.shared_users?.length   || node.data?.shared_groups?.length 
+              ) ? { color: "#f5681b", fontWeight: 500 } : {};
+
+
             const treeNode: TreeNode = {
                 id: node.id,
                 key: node.type + '-' + node.id,
@@ -134,9 +140,8 @@ function buildExplorerTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
                 children: [],
                 droppable: node.type === 'f',
                 draggable: true,
+                style: node_style
             };
-
-
 
             // Check if the node has a parent
             if (node.parent && node.parent != "h") {
