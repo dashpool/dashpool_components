@@ -79,6 +79,11 @@ type DashpoolProviderProps = {
 const DashpoolProvider = (props: DashpoolProviderProps) => {
   const { children } = props;
   const [sharedData, setSharedData] = useState<SharedData>({ ...props.initialData });
+
+  useEffect(() => {
+    setSharedData(props.initialData);
+  }, [props.initialData])
+
   const toast = useRef<Toast>(null);
 
   const updateSharedData = (newData: SharedData) => {

@@ -2,6 +2,7 @@ import dash
 import dash_lumino_components as dlc
 import dash_express_components as dxc
 from dash import html, dcc, Input, Output
+from dash.exceptions import PreventUpdate
 import json
 
 import dashpool_components
@@ -123,7 +124,7 @@ menu = dlc.Menu([
 
 
 def layout(): return dashpool_components.DashpoolProvider([
-    dcc.Interval(id='userupdate', interval=20000, n_intervals=0),
+    dcc.Interval(id='userupdate', interval=200, n_intervals=0),
     dlc.MenuBar(menu, 'menuBar'),
     dlc.BoxPanel([
         dlc.SplitPanel([
@@ -214,7 +215,7 @@ def layout(): return dashpool_components.DashpoolProvider([
 
         ], id="splitPanel")
     ], "boxPanel", addToDom=True)
-], id="context", initialData={"apps": apps, "frames": frames, "groups": groups, "users": users})
+], id="context")
 
 
 app = dash.Dash(__name__)
@@ -286,6 +287,17 @@ def clear_exp(input):
 )
 def clear_exp(input):
     return json.dumps(input)
+
+
+
+@app.callback(
+    Output("context", "initialData"),
+    Input("userupdate", "n_intervals")
+)
+def update_initial_data(input):
+    if input > 2:
+        raise PreventUpdate()
+    return {"apps": apps, "frames": frames, "groups": groups, "users": users}
 
 
 if __name__ == '__main__':
