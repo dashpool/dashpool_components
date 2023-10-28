@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect, useRe
 import { Toast } from 'primereact/toast';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
+import { Checkbox } from 'primereact/checkbox';
 
 type AppInfo = {
   name: string,
@@ -103,6 +104,7 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
 
   // /// LOGIN section
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [reloadPageAfterLogin, setReloadPageAfterLogin] = useState(true);
 
   const initLogin = () => {
 
@@ -143,6 +145,9 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
           clearInterval(intervalId);
           popupWindow.close();
           setShowLoginModal(false);
+          if (reloadPageAfterLogin) {
+            window.location.reload();
+          }
         }
       }, 100);
 
@@ -203,17 +208,29 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       <Dialog
         visible={showLoginModal}
         onHide={onHide}
-        header="You are not authorized"
+        header="You are not logged in!"
         modal={true}
         footer={
           <div>
-            <Button onClick={initLogin} className="p-button-primary">OK</Button>
+            <Button onClick={initLogin} className="p-button-primary">Login</Button>
             <Button onClick={onHide} className="p-button-secondary">Cancel</Button>
           </div>
         }
       >
-        Do you want to log in?
+        Please click the 'Login' button to initiate the login process.<br />
+        A popup window will appear to create a login request.<br />
+        <div>
+          <Checkbox
+            inputId="reloadCheckbox"
+            checked={reloadPageAfterLogin}
+            onChange={(e) => setReloadPageAfterLogin(e.checked)}
+          />
+          <label htmlFor="reloadCheckbox">Reload the page after login</label>
+        </div>
       </Dialog>
+
+
+
 
     </div>
   );
