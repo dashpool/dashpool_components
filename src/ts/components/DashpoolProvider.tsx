@@ -219,13 +219,13 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       >
         Please click the 'Login' button to initiate the login process.<br />
         A popup window will appear to create a login request.<br />
-        <div>
+        <div className='mt-2 p-2'>
           <Checkbox
             inputId="reloadCheckbox"
             checked={reloadPageAfterLogin}
             onChange={(e) => setReloadPageAfterLogin(e.checked)}
           />
-          <label htmlFor="reloadCheckbox">Reload the page after login</label>
+          <label htmlFor="reloadCheckbox">&nbsp;Reload the page after login</label>
         </div>
       </Dialog>
 
