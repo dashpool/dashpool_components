@@ -180,9 +180,9 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
         header="You are not authorized"
         modal={true}
         footer={
-          <div>
-            <Button onClick={initLogin} className="p-button-primary">OK</Button>
+          <div style={{marginRight: "-8px"}}>
             <Button onClick={onHide} className="p-button-secondary">Cancel</Button>
+            <Button onClick={initLogin} className="p-button-primary">OK</Button>
           </div>
         }
       >

@@ -425,12 +425,12 @@ const Explorer = (props: ExplorerProps) => {
         header="Rename"
         modal
         footer={
-          <div>
-            <Button onClick={handleRename} className="p-button-primary">
-              Rename
-            </Button>
+          <div style={{marginRight: "-8px"}}>
             <Button onClick={cancelRename} className="p-button-secondary">
               Cancel
+            </Button>          
+            <Button onClick={handleRename} className="p-button-primary">
+              Rename
             </Button>
           </div>
         }
@@ -450,12 +450,12 @@ const Explorer = (props: ExplorerProps) => {
         header="Create New Folder"
         modal
         footer={
-          <div>
-            <Button onClick={handleCreateFolder} className="p-button-primary">
-              Create
-            </Button>
+          <div style={{marginRight: "-8px"}}>
             <Button onClick={cancelCreateFolder} className="p-button-secondary">
               Cancel
+            </Button>            
+            <Button onClick={handleCreateFolder} className="p-button-primary">
+              Create
             </Button>
           </div>
         }
