@@ -69,7 +69,7 @@ const Loader = (props: LoaderProps) => {
 
       if (output.endsWith("defParams")) {
         const Component = window["dash_express_components"]["Graph"];
-        return <Component defParams={extractedData} plotApi={url.replace('_dash-update-component', 'plotApi')} style={{ width: '100%', height: '100%' }} setProps={(_) => { }} />;
+        return <Component defParams={extractedData} plotApi={url.replace('_dash-update-component', 'plotApi')} style={{ width: '100%', height: '100%' }} setProps={(el) => {console.log(el) }} />;
       }
 
       return null;
