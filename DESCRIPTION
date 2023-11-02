@@ -1,6 +1,6 @@
 Package: dashpoolComponents
 Title: Custom Components for Dashpool
-Version: 0.0.39
+Version: 0.0.41
 Description: Custom Components for Dashpool
 Depends: R (>= 3.0.2)
 Imports: 

@@ -34,11 +34,11 @@ type LoaderProps = {
  * Component to serve as Loader for Graphs
  */
 const Loader = (props: LoaderProps) => {
-  const { id, url, request, output } = props;
+  const { id, url, request, output, setProps } = props;
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [defParams, setDefParams] = useState({});
+  const [defParams, setDefParams] = useState(request);
 
 
   useEffect(() => {
@@ -59,59 +59,71 @@ const Loader = (props: LoaderProps) => {
       return extractedData;
     };
 
-    // Function to instantiate the React component from the window
-    const initComponent = (extractedData: any) => {
 
-      if (output.endsWith("figure")) {
-        const Component = window["dash_core_components"]["Graph"];
-        return <Component figure={extractedData} style={{ width: '100%', height: '100%' }} setProps={(_) => { }} />;
-      }
+    const init_dcc_component = (figInput: any) => {
+      const Component = window["dash_core_components"]["Graph"];
+      return <Component figure={figInput} style={{ width: '100%', height: '100%' }} setProps={(_) => { }} />;
+    }
 
 
-      if (output.endsWith("defParams")) {
-        setDefParams(extractData);
-        const Component = window["dash_express_components"]["Graph"];
-        return <Component defParams={defParams} plotApi={url.replace('_dash-update-component', 'plotApi')} style={{ width: '100%', height: '100%' }}
-          setProps={(newProps) => {
-            if (newProps.defParams !== undefined) {
-              setDefParams(newProps.defParams);
-              console.log("Todo", newProps.defParams)
-            }
-          }}
-        />;
-      }
+    const init_dxc_component = () => {
+      const Component = window["dash_express_components"]["Graph"];
+      return <Component defParams={defParams} plotApi={url} style={{ width: '100%', height: '100%' }}
+        setProps={(newProps) => {
+          if (newProps.defParams !== undefined) {
+            setDefParams(newProps.defParams);
+            setProps({ request: newProps.defParams })
+          }
+        }}
+      />;
+    }
 
-      return null;
-    };
+    if (output.endsWith("figure")) {
 
-    // Fetch data from the provided URL using POST request
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(request),
-    })
-      .then((response) => response.json())
-      .then((jsonData) => {
-        // Extract the desired data from the JSON response
-        const extractedData = ("multi" in jsonData && jsonData.multi) ? extractData(jsonData.response, output) : jsonData;
-
-        // Instantiate the React component with the extracted data
-        const renderedComponent = initComponent(extractedData);
-
-        // Set dataLoading to false to indicate that the data component is fully rendered
-        setLoading(false);
-
-        // Update the state to display the rendered component
-        setData(renderedComponent);
-        setError(null);
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
       })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-        setError('Error fetching data. Please try again later.');
-      });
+        .then((response) => response.json())
+        .then((jsonData) => {
+          console.log("jsonData", jsonData);
+          // Extract the desired data from the JSON response
+          const extractedData = ("multi" in jsonData && jsonData.multi) ? extractData(jsonData.response, output) : jsonData;
+
+          // Instantiate the React component with the extracted data
+          const renderedComponent = init_dcc_component(extractedData);
+
+          // Set dataLoading to false to indicate that the data component is fully rendered
+          setLoading(false);
+
+          // Update the state to display the rendered component
+          setData(renderedComponent);
+          setError(null);
+        })
+        .catch((error) => {
+          console.error('Error fetching data:', error);
+          setLoading(false);
+          setError('Error fetching data. Please try again later.');
+        });
+
+    }
+
+    if (url.endsWith("plotApi")) {
+
+      // Instantiate the React component with the extracted data
+      const renderedComponent = init_dxc_component();
+
+      // Set dataLoading to false to indicate that the data component is fully rendered
+      setLoading(false);
+
+      // Update the state to display the rendered component
+      setData(renderedComponent);
+      setError(null);
+    }
+
   }, [url, request, output, defParams]);
 
   return (

@@ -114,7 +114,15 @@ frames = [
 historyNodes = [
     {"id": "12311", "type": "p", "label": "Plot1", "parent": "1", "frame": "frame1", "data": {"url":  "https://localhost:443/example/_dash-update-component"}},
     {"id": "12313", "type": "a", "label": "Appstate1", "parent": "2", "frame": "frame1123",
-        "data": {"url":  "https://localhost:443/example/_dash-update-component"}}
+        "data": {"url":  "https://localhost:443/example/_dash-update-component"}},
+    {"id": "loh8qm7nwx3bmr28sdg", "frame": "frame1123", "label": "Plot2", "type": "p",  "data": {
+        "url": 'https://localhost:443/example/plotApi',
+
+
+
+    }}
+
+
 ]
 
 menu = dlc.Menu([
@@ -124,7 +132,7 @@ menu = dlc.Menu([
 
 
 def layout(): return dashpool_components.DashpoolProvider([
-    dcc.Interval(id='userupdate', interval=200, n_intervals=0),
+    dcc.Interval(id='userupdate', interval=20000, n_intervals=0),
     dlc.MenuBar(menu, 'menuBar'),
     dlc.BoxPanel([
         dlc.SplitPanel([
@@ -166,6 +174,9 @@ def layout(): return dashpool_components.DashpoolProvider([
                     html.Div(id="historyDashpoolEvent"),
                     html.Div(id="historyRefreshed"),
 
+                    html.H1("Loader"),
+                    html.Div(id="loaderArequest"),
+
 
                 ], id="d1", title="Events"),
 
@@ -174,8 +185,24 @@ def layout(): return dashpool_components.DashpoolProvider([
                 dlc.Widget([
 
                     dashpool_components.Loader(
-                        id="loader",
+                        id="loaderA",
+                        url="https://localhost/example/plotApi",
+
+                        request={"plot":{"type":"box","params":{"x":"continent","y":"lifeExp"}},"filter":[],"transform":[],"parameterization":{"parameters":[],"computeAll":False,"computeMatrix":[]}},
+                        output="fig.defParams"
+
+
+                    )
+
+                ], id="dlA", title="DXC Loader"),
+
+
+                dlc.Widget([
+
+                    dashpool_components.Loader(
+                        id="loaderB",
                         url="https://localhost/example/_dash-update-component",
+
                         request={
                            "output": 'graph-content.figure',
                            "outputs": {
@@ -196,7 +223,7 @@ def layout(): return dashpool_components.DashpoolProvider([
 
                     )
 
-                ], id="dl", title="Loader"),
+                ], id="dlB", title="DCC Loader"),                
 
 
             ], id="dock-panel"),
@@ -284,6 +311,14 @@ def clear_exp(input):
 @app.callback(
     Output("state-json", "children"),
     Input("context", "sharedData")
+)
+def clear_exp(input):
+    return json.dumps(input)
+
+
+@app.callback(
+    Output("loaderArequest", "children"),
+    Input("loaderA", "request")
 )
 def clear_exp(input):
     return json.dumps(input)
