@@ -2,7 +2,7 @@
 name = "DashpoolComponents"
 uuid = "1b08a953-4be3-4667-9a23-6f785c13abf9"
 authors = ["Viktor Krückl <viktor@krueckl.de>"]
-version = "0.0.38"
+version = "0.0.39"
 
 [deps]
 Dash = "1b08a953-4be3-4667-9a23-3db579824955"

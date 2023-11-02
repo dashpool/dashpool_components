@@ -38,6 +38,7 @@ const Loader = (props: LoaderProps) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [defParams, setDefParams] = useState({});
 
 
   useEffect(() => {
@@ -68,8 +69,16 @@ const Loader = (props: LoaderProps) => {
 
 
       if (output.endsWith("defParams")) {
+        setDefParams(extractData);
         const Component = window["dash_express_components"]["Graph"];
-        return <Component defParams={extractedData} plotApi={url.replace('_dash-update-component', 'plotApi')} style={{ width: '100%', height: '100%' }} setProps={(el) => {console.log(el) }} />;
+        return <Component defParams={defParams} plotApi={url.replace('_dash-update-component', 'plotApi')} style={{ width: '100%', height: '100%' }}
+          setProps={(newProps) => {
+            if (newProps.defParams !== undefined) {
+              setDefParams(newProps.defParams);
+              console.log("Todo", newProps.defParams)
+            }
+          }}
+        />;
       }
 
       return null;
@@ -103,7 +112,7 @@ const Loader = (props: LoaderProps) => {
         setLoading(false);
         setError('Error fetching data. Please try again later.');
       });
-  }, [url, request, output]);
+  }, [url, request, output, defParams]);
 
   return (
     <div id={id} style={{ width: '100%', height: '100%', position: 'relative' }}>
