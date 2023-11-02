@@ -9,6 +9,7 @@ import { Button } from 'primereact/button';
 import { useDashpoolData } from './DashpoolProvider';
 
 import { setDashpoolEvent, DashpoolEvent, TreeViewNode, findTreeViewNode, buildHistoryTree, findTargetElement, generateUniqueId } from '../helper';
+import { TreeNode } from 'primereact/treenode';
 
 
 
@@ -49,11 +50,13 @@ const History = (props: HistoryProps) => {
 
   const [nRefreshed, setNRefreshed] = useState(props.n_refreshed || 0);
 
+  const [internalNodes, setInternalNodes] = useState<TreeNode[]>([]);
 
-
-  let tree = buildHistoryTree(nodes, sharedData.frames || [], sharedData.apps || []);
-  const [internalNodes, setInternalNodes] = useState(tree);
-
+  useEffect(() => {
+    setInternalNodes(buildHistoryTree(nodes, sharedData?.frames || [], sharedData?.apps || []));
+  }, [sharedData, props.nodes])
+    
+  
   const cm = useRef<ContextMenu>(null);
   const hist = useRef<Tree>(null);
 
@@ -71,9 +74,7 @@ const History = (props: HistoryProps) => {
     }
   };
 
-  useEffect(() => {
-    setInternalNodes(buildHistoryTree(nodes, sharedData.frames || [], sharedData.apps || []));
-  }, [props.nodes])
+
 
 
   useEffect(() => {
