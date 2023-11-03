@@ -243,6 +243,18 @@ const Explorer = (props: ExplorerProps) => {
 
     if (!key.startsWith("s") && !key.startsWith("h")) {
       output.push({ label: 'Rename', icon: 'fas fa-edit', command: (e) => openRenameModal(node) });
+    }
+
+    if (!key.startsWith("s") && !key.startsWith("h") && !key.startsWith("f")) {
+      output.push({
+        label: 'Duplicate', icon: 'fas fa-copy', command: (e) => {
+          duplicateNode(node);
+          openRenameModal(node)
+        }
+      });
+    }
+
+    if (!key.startsWith("s") && !key.startsWith("h")) {
       output.push({ label: 'Delete', icon: 'fas fa-trash', command: (e) => deleteNode(node) });
     }
 
@@ -283,6 +295,34 @@ const Explorer = (props: ExplorerProps) => {
     setRenameModalVisible(false);
   };
 
+
+  // duplicate Node
+
+  // Function to handle folder creation and close the modal
+  const duplicateNode = (inNode: TreeNode) => {
+
+    console.log(inNode);
+
+    let oldid = inNode.id;
+    let id = generateUniqueId();
+
+    let baseNode = nodes.filter(n => n.id == oldid)[0];
+
+
+    let newTreeViewNode: TreeViewNode = {
+      ...baseNode, id: id
+    }
+    nodes.push(newTreeViewNode);
+
+
+    let newInternalNodes = buildExplorerTree(nodes);
+    setInternalNodes(newInternalNodes);
+
+    setTimeout(
+      () => setProps({ nodeChangeEvent: newTreeViewNode }),
+      100
+    );
+  };
 
   // Create Folder Modal
   const [isCreateFolderModalVisible, setCreateFolderModalVisible] = useState(false);
@@ -532,10 +572,10 @@ const Explorer = (props: ExplorerProps) => {
         header="Rename"
         modal
         footer={
-          <div style={{marginRight: "-8px"}}>
+          <div style={{ marginRight: "-8px" }}>
             <Button onClick={cancelRename} className="p-button-secondary">
               Cancel
-            </Button>          
+            </Button>
             <Button onClick={handleRename} className="p-button-primary">
               Rename
             </Button>
@@ -559,10 +599,10 @@ const Explorer = (props: ExplorerProps) => {
         header="Create New Folder"
         modal
         footer={
-          <div style={{marginRight: "-8px"}}>
+          <div style={{ marginRight: "-8px" }}>
             <Button onClick={cancelCreateFolder} className="p-button-secondary">
               Cancel
-            </Button>            
+            </Button>
             <Button onClick={handleCreateFolder} className="p-button-primary">
               Create
             </Button>
