@@ -220,7 +220,7 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
         let app_data = {};
 
         const matchingFrameInfo = frameInfo.filter((el) => el.id === frame);
-        const node_style = (matchingFrameInfo.length == 0) ? {} : { color: "#a1a1a1", background: "#f5f5f5" };
+        const node_style = (matchingFrameInfo.length == 0) ? { color: "#a1a1a1", background: "#f5f5f5" }: {};
         
         // Check if the node contains app information
         if (node.app) {
@@ -230,16 +230,18 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
         } else {
             const matchingAppInfo = appInfo.filter((el) => el.url === baseurl);
         
-            // Use matchingFrameInfo or matchingAppInfo if available
-            if (matchingFrameInfo.length > 0) {
-                app_name = matchingFrameInfo[0].name;
-                app_icon = matchingFrameInfo[0].icon;
-                app_data = matchingFrameInfo[0];
-            } else if (matchingAppInfo.length > 0) {
+            // Use matchingAppInfo if available
+             if (matchingAppInfo.length > 0) {
                 app_name = matchingAppInfo[0].name;
                 app_icon = matchingAppInfo[0].icon;
                 app_data = matchingAppInfo[0];
             }
+        }
+        // Use matchingFrameInfo if available
+        if (matchingFrameInfo.length > 0) {
+            app_name = matchingFrameInfo[0].name;
+            app_icon = matchingFrameInfo[0].icon;
+            app_data = matchingFrameInfo[0];
         }
 
         if (!frameGroups[frame]) {
