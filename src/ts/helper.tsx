@@ -234,14 +234,12 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
              if (matchingAppInfo.length > 0) {
                 app_name = matchingAppInfo[0].name;
                 app_icon = matchingAppInfo[0].icon;
-                app_data = matchingAppInfo[0];
             }
         }
         // Use matchingFrameInfo if available
         if (matchingFrameInfo.length > 0) {
             app_name = matchingFrameInfo[0].name;
             app_icon = matchingFrameInfo[0].icon;
-            app_data = matchingFrameInfo[0];
         }
 
         if (!frameGroups[frame]) {
