@@ -8,6 +8,7 @@ type TreeViewNode = {
     id: string;
     type: string;
     label: string;
+    app?: any;
     shared?: string[];
     icon?: string;
     frame?: string;
@@ -211,38 +212,35 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
 
     treeViewNodes.forEach((node) => {
         const frame = node.frame || 'NoFrame';
-
         const url = node.data.url;
         const baseurl = url.slice(0, url.lastIndexOf('/') + 1);
+        
+        let app_name = 'NoApp';
+        let app_icon = 'fa-solid fa-cube';
+        let app_data = {};
 
         const matchingFrameInfo = frameInfo.filter((el) => el.id === frame);
-        const matchingAppInfo = appInfo.filter((el) => el.url === baseurl);
-
-
-        const app_name = matchingFrameInfo.length > 0
-            ? matchingFrameInfo[0].name
-            : matchingAppInfo.length > 0
-                ? matchingAppInfo[0].name
-                : 'NoApp';
-
-        const app_icon = matchingFrameInfo.length > 0
-            ? matchingFrameInfo[0].icon
-            : matchingAppInfo.length > 0
-                ? matchingAppInfo[0].icon
-                : 'fa-solid fa-cube';
-
-
-        const app_data = {
-            ...(matchingFrameInfo.length > 0 && matchingFrameInfo[0]),
-            ...(matchingAppInfo.length > 0 && matchingAppInfo[0])
-            };
-
-        const node_style = matchingFrameInfo.length > 0
-            ? {}
-            : matchingAppInfo.length > 0
-                ? { color: "#a1a1a1", background: "#f5f5f5" }
-                : { color: "#a1a1a1", background: "#f5f5f5" };
-
+        const node_style = (matchingFrameInfo.length == 0) ? {} : { color: "#a1a1a1", background: "#f5f5f5" };
+        
+        // Check if the node contains app information
+        if (node.app) {
+            app_name = node.app.name || app_name;
+            app_icon = node.app.icon || app_icon;
+            app_data = node.app;
+        } else {
+            const matchingAppInfo = appInfo.filter((el) => el.url === baseurl);
+        
+            // Use matchingFrameInfo or matchingAppInfo if available
+            if (matchingFrameInfo.length > 0) {
+                app_name = matchingFrameInfo[0].name;
+                app_icon = matchingFrameInfo[0].icon;
+                app_data = matchingFrameInfo[0];
+            } else if (matchingAppInfo.length > 0) {
+                app_name = matchingAppInfo[0].name;
+                app_icon = matchingAppInfo[0].icon;
+                app_data = matchingAppInfo[0];
+            }
+        }
 
         if (!frameGroups[frame]) {
             frameGroups[frame] = {
