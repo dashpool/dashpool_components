@@ -485,6 +485,7 @@ const Explorer = (props: ExplorerProps) => {
     };
 
 
+      
 
     if (container) {
       container.addEventListener('drop', handleDrop);
@@ -499,16 +500,23 @@ const Explorer = (props: ExplorerProps) => {
     };
 
 
+
   }, [sharedData, internalNodes, nodes]);
 
-
-
-
+  
+  const handleKeyDown = (event) => {
+    if (event.key === 'Delete' && selectedKey !== null) {
+      // Delete the selected node
+      const { node } = findTreeNode(internalNodes, selectedKey.split("-")[1]);
+      deleteNode(node);
+      setSelectedKey(null);
+    }
+  };
 
 
 
   return (
-    <div id={id} style={{ width: "100%", height: "100%" }}>
+    <div id={id} style={{ width: "100%", height: "100%" }} onKeyDown={handleKeyDown}>
       {/* Node Context menu */}
       <ContextMenu ref={cm} model={contextMenuItems} ></ContextMenu>
 
@@ -517,6 +525,8 @@ const Explorer = (props: ExplorerProps) => {
       <Tree value={internalNodes} dragdropScope={'dashpool'} ref={explorer}
         className='p-tree-reload'
 
+       
+        
 
         onNodeDoubleClick={(ev) => {
           const node = findTreeViewNode(nodes, ev.node.id);
@@ -527,8 +537,10 @@ const Explorer = (props: ExplorerProps) => {
 
         selectionMode="single"
         selectionKeys={selectedKey}
+
         onSelectionChange={(e) => {
           const filteredNodes = nodes.filter((n) => n.type + "-" + n.id == e.value);
+          setSelectedKey(e.value);
           if (filteredNodes.length > 0) { setSelectedNode(filteredNodes[0]) }
         }}
 

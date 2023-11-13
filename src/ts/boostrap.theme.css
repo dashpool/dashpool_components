@@ -4799,7 +4799,7 @@
 
 .p-tree .p-tree-container .p-treenode .p-treenode-content.p-highlight {
   background: #f5681b;
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .p-tree .p-tree-container .p-treenode .p-treenode-content.p-highlight .p-tree-toggler,
