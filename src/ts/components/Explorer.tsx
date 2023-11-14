@@ -248,8 +248,8 @@ const Explorer = (props: ExplorerProps) => {
     if (!key.startsWith("s") && !key.startsWith("h") && !key.startsWith("f")) {
       output.push({
         label: 'Duplicate', icon: 'fas fa-copy', command: (e) => {
-          duplicateNode(node);
-          openRenameModal(node)
+          const newNode = duplicateNode(node);
+          openRenameModal(newNode)
         }
       });
     }
@@ -299,7 +299,8 @@ const Explorer = (props: ExplorerProps) => {
   // duplicate Node
 
   // Function to handle folder creation and close the modal
-  const duplicateNode = (inNode: TreeNode) => {
+  // returns the new node
+  const duplicateNode = (inNode: TreeNode): TreeNode =>   {
 
     console.log(inNode);
 
@@ -322,6 +323,9 @@ const Explorer = (props: ExplorerProps) => {
       () => setProps({ nodeChangeEvent: newTreeViewNode }),
       100
     );
+
+    const {node: newTreeNode} = findTreeNode(newInternalNodes, id);
+    return newTreeNode;
   };
 
   // Create Folder Modal
@@ -594,6 +598,7 @@ const Explorer = (props: ExplorerProps) => {
           </div>
         }
       >
+        <p>New name:</p>
         <InputText
           type="text"
           value={newLabel}
@@ -621,11 +626,12 @@ const Explorer = (props: ExplorerProps) => {
           </div>
         }
       >
+        <p>New folder name:</p>
         <InputText
           type="text"
           value={newFolderName}
           onChange={(e) => setNewFolderName(e.target.value)}
-          placeholder="Enter folder name"
+          placeholder="Enter here"
           className='w-100'
         />
       </Dialog>
@@ -639,12 +645,12 @@ const Explorer = (props: ExplorerProps) => {
         header={"Share " + selectedNode?.label}
         modal
         footer={
-          <div>
-            <Button onClick={handleSaveSharing} className="p-button-primary">
-              Save
-            </Button>
+          <div style={{ marginRight: "-8px" }}>
             <Button onClick={closeSharingModal} className="p-button-secondary">
               Cancel
+            </Button>          
+            <Button onClick={handleSaveSharing} className="p-button-primary">
+              Save
             </Button>
           </div>
         }
