@@ -92,21 +92,48 @@
 
 
 
-/* ======= reload button ===========*/
+/* ======= reload /clear button ===========*/
 
-.p-tree-reload.p-tree {
+.e-tree-reload.p-tree {
     margin-top: -40px;
 }
 
-.p-tree-reload > .p-tree-header {
+.e-tree-reload > .p-tree-header {
     width: calc(100% - 50px);
 }
 
-.p-tree-reload.p-button {
+.e-tree-reload.p-button {
     right: calc(-100% + 42px);
     margin-top: 2px;
 }
 
+
+
+
+
+.h-tree-reload.p-tree {
+    margin-top: -40px;
+}
+
+.h-tree-reload > .p-tree-header {
+    width: calc(100% - 95px);
+
+}
+
+.h-tree-reload.p-button {
+    right: calc(-100% + 86px);
+    margin-top: 2px;
+}
+
+
+.h-tree-clear.p-tree {
+    margin-top: -40px;
+}
+
+.h-tree-clear.p-button {
+    right: calc(-100% + 80px);
+    margin-top: 2px;
+}
 
 
 /* ========== simple spinner =============*/

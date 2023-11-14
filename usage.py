@@ -276,10 +276,11 @@ def print_output(input):
 
 @app.callback(
     Output("historyRefreshed", "children"),
-    Input("history", "n_refreshed")
+    Input("history", "n_refreshed"),
+    Input("history", "n_cleared")
 )
-def print_output(input):
-    return f"History n_refreshed: {input}"
+def print_output(n_refreshed, n_cleared):
+    return f"History n_refreshed: {n_refreshed}  n_cleared: {n_cleared}"
 
 
 @app.callback(

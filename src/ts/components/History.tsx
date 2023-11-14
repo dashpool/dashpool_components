@@ -30,6 +30,11 @@ type HistoryProps = {
   n_refreshed?: number;
 
   /**
+   * : An integer that represents the number of times that this element has been cleared.
+   */
+  n_cleared?: number;
+
+  /**
    * latest Dashpool Event
    */
   dashpoolEvent?: DashpoolEvent
@@ -49,14 +54,15 @@ const History = (props: HistoryProps) => {
   const { sharedData, updateSharedData } = useDashpoolData();
 
   const [nRefreshed, setNRefreshed] = useState(props.n_refreshed || 0);
+  const [nCleared, setNCleared] = useState(props.n_cleared || 0);
 
   const [internalNodes, setInternalNodes] = useState<TreeNode[]>([]);
 
   useEffect(() => {
     setInternalNodes(buildHistoryTree(nodes, sharedData?.frames || [], sharedData?.apps || []));
   }, [sharedData, props.nodes])
-    
-  
+
+
   const cm = useRef<ContextMenu>(null);
   const hist = useRef<Tree>(null);
 
@@ -71,6 +77,17 @@ const History = (props: HistoryProps) => {
     // Use setProps to send the new value to Python
     if (setProps) {
       setProps({ n_refreshed: newNRefreshed });
+    }
+  };
+
+
+  const handleClear = () => {
+    const newNCleared = nCleared + 1;
+    setNCleared(newNCleared);
+
+    // Use setProps to send the new value to Python
+    if (setProps) {
+      setProps({ n_cleared: newNCleared });
     }
   };
 
@@ -154,7 +171,8 @@ const History = (props: HistoryProps) => {
       {/* Node Context menu */}
       <ContextMenu ref={cm} model={contextMenuItems} ></ContextMenu>
 
-      <Button onClick={handleRefresh} icon="fa fa-sync" className='p-tree-reload' rounded />
+      <Button onClick={handleRefresh} icon="fa fa-sync" className='h-tree-reload' rounded />
+      <Button onClick={handleClear} icon="fa fa-broom" className='h-tree-clear' rounded />
       {/* Main Tree View*/}
       <Tree value={internalNodes} ref={hist}
 
@@ -181,7 +199,7 @@ const History = (props: HistoryProps) => {
           }
         }}
 
-        className='p-tree-reload'
+        className='h-tree-reload'
       />
 
     </div>
@@ -190,6 +208,7 @@ const History = (props: HistoryProps) => {
 
 History.defaultProps = {
   n_refresh: 0,
+  n_cleared: 0,
   nodes: []
 };
 
