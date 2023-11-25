@@ -68,7 +68,7 @@ const Loader = (props: LoaderProps) => {
 
     const init_dxc_component = () => {
       const Component = window["dash_express_components"]["Graph"];
-      return <Component defParams={defParams} plotApi={url} style={{ width: '100%', height: '100%' }} editButton={true}
+      return <Component defParams={defParams} plotApi={url} style={{ width: '100%', height: '100%' }} editButton={true} longCallback={true}
         setProps={(newProps) => {
           if (newProps.defParams !== undefined) {
             setDefParams(newProps.defParams);
