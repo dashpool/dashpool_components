@@ -129,8 +129,8 @@ function buildExplorerTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
             const node = unprocessedNodes[i];
 
             const node_style = (
-                node.data?.shared_users?.length   || node.data?.shared_groups?.length 
-              ) ? { color: "#f5681b", fontWeight: 500 } : {};
+                node.data?.shared_users?.length || node.data?.shared_groups?.length
+            ) ? { color: "#f5681b", fontWeight: 500 } : {};
 
 
             const treeNode: TreeNode = {
@@ -215,14 +215,14 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
         const frame = node.frame || 'NoFrame';
         const url = node.data.url;
         const baseurl = url.slice(0, url.lastIndexOf('/') + 1);
-        
+
         let app_name = 'NoApp';
         let app_icon = 'fa-solid fa-cube';
         let app_data = {};
 
         const matchingFrameInfo = frameInfo.filter((el) => el.id === frame);
-        const node_style = (matchingFrameInfo.length == 0) ? { color: "#a1a1a1", background: "#f5f5f5" }: {};
-        
+        const node_style = (matchingFrameInfo.length == 0) ? { color: "#a1a1a1", background: "#f5f5f5" } : {};
+
         // Check if the node contains app information
         if (node.app) {
             app_name = node.app.name || app_name;
@@ -230,9 +230,9 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
             app_data = node.app;
         } else {
             const matchingAppInfo = appInfo.filter((el) => el.url === baseurl);
-        
+
             // Use matchingAppInfo if available
-             if (matchingAppInfo.length > 0) {
+            if (matchingAppInfo.length > 0) {
                 app_name = matchingAppInfo[0].name;
                 app_icon = matchingAppInfo[0].icon;
             }
@@ -271,27 +271,33 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
         frameGroups[frame].children.push(treeNode);
     });
 
-    // // also add frames without nodes
-    // frameInfo.forEach((frame) => {
-    //     if (!frameGroups[frame.id]) {
+    // also add frames without nodes
+    frameInfo.forEach((frame) => {
+        if (!frameGroups[frame.id]) {
 
-    //         const url = frame.url;
-    //         const baseurl = url.slice(0, url.lastIndexOf('/') + 1);
-    //         const matchingAppInfo = appInfo.filter((el) => el.url === baseurl);
+            try {
+                const url = frame.url;
+                const baseurl = url.slice(0, url.lastIndexOf('/') + 1);
+                const matchingAppInfo = appInfo.filter((el) => el.url === baseurl);
 
-    //         frameGroups[frame.id] = {
-    //             id: frame.id,
-    //             key: frame.id,
-    //             label: frame.name,
-    //             icon: frame.icon,
-    //             children: [],
-    //             droppable: false,
-    //             draggable: true,
-    //             data: matchingAppInfo.length > 0 ? matchingAppInfo[0] : {},
-    //             style: { color: "#a1a1a1" }
-    //         };
-    //     }
-    // });
+                if (matchingAppInfo.length > 0) {
+                    frameGroups[frame.id] = {
+                        id: frame.id,
+                        key: frame.id,
+                        label: frame.name,
+                        icon: frame.icon,
+                        children: [],
+                        droppable: false,
+                        draggable: true,
+                        data: matchingAppInfo[0],
+                        style: { color: "#a1a1a1" }
+                    };
+                }
+            } catch (e) {
+
+            }
+        }
+    });
 
     return Object.values(frameGroups);
 }
