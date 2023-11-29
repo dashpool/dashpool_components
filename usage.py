@@ -108,7 +108,9 @@ frames = [
     {"id": "frame1", "name": "test (2)", "group": "Widgets",
         "icon": "fa fa-plus", "url": "https://localhost:443/example/"},
     {"id": "frame2", "name": "test (2)", "group": "Widgets",
-        "icon": "fa fa-plus", "url": "https://localhost:443/example/"}
+        "icon": "fa fa-plus", "url": "https://localhost:443/example/"},
+    {"id": "frame3", "name": "nice test", "group": "Widgets",
+        "icon": "fa fa-plus", "url": "https://localhost:443/example/"}        
 ]
 
 historyNodes = [
@@ -117,10 +119,7 @@ historyNodes = [
         "data": {"url":  "https://localhost:443/example/_dash-update-component"}},
     {"id": "loh8qm7nwx3bmr28sdg", "frame": "frame1123", "label": "Plot2", "type": "p",  "data": {
         "url": 'https://localhost:443/example/plotApi',
-
-
-
-    }}
+    }},
 
 
 ]

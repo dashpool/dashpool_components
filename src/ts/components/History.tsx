@@ -126,6 +126,9 @@ const History = (props: HistoryProps) => {
         const label = internalNode["label"];
         const app_data = internalNode["data"]
 
+
+        showProgress(true);
+
         fetch("/backend/savelayout", {
           method: 'POST',
           headers: {
@@ -134,6 +137,7 @@ const History = (props: HistoryProps) => {
           body: JSON.stringify({ id: id, frame: frame, label: label, app: app_data }), // Serialize the object to JSON
         })
           .then(response => {
+            showProgress(false);
             if (!response.ok) {
               window.postMessage({
                 type: "fetchError",

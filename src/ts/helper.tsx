@@ -46,6 +46,7 @@ const iconMapping: { [key: string]: string } = {
     r: 'far fa-file-powerpoint',
     s: 'far fa-user',
     f: 'far fa-folder',
+    d: ''
 };
 
 function findTreeNode(tree: TreeNode[], idToFind: string): { node: TreeNode, parent: string } | undefined {
@@ -268,6 +269,23 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
         };
 
         frameGroups[frame].children.push(treeNode);
+    });
+
+    // also add frames without nodes
+    frameInfo.forEach((frame) => {
+        if (!frameGroups[frame.id]) {
+            frameGroups[frame.id] = {
+                id: frame.id,
+                key: frame.id,
+                label: frame.name,
+                icon: frame.icon,
+                children: [],
+                droppable: false,
+                draggable: true,
+                data: {},
+                style: { color: "#a1a1a1" }
+            };
+        }
     });
 
     return Object.values(frameGroups);
