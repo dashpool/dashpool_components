@@ -271,27 +271,27 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
         frameGroups[frame].children.push(treeNode);
     });
 
-    // also add frames without nodes
-    frameInfo.forEach((frame) => {
-        if (!frameGroups[frame.id]) {
+    // // also add frames without nodes
+    // frameInfo.forEach((frame) => {
+    //     if (!frameGroups[frame.id]) {
 
-            const url = frame.url;
-            const baseurl = url.slice(0, url.lastIndexOf('/') + 1);
-            const matchingAppInfo = appInfo.filter((el) => el.url === baseurl);
+    //         const url = frame.url;
+    //         const baseurl = url.slice(0, url.lastIndexOf('/') + 1);
+    //         const matchingAppInfo = appInfo.filter((el) => el.url === baseurl);
 
-            frameGroups[frame.id] = {
-                id: frame.id,
-                key: frame.id,
-                label: frame.name,
-                icon: frame.icon,
-                children: [],
-                droppable: false,
-                draggable: true,
-                data: matchingAppInfo.length > 0 ? matchingAppInfo[0] : {},
-                style: { color: "#a1a1a1" }
-            };
-        }
-    });
+    //         frameGroups[frame.id] = {
+    //             id: frame.id,
+    //             key: frame.id,
+    //             label: frame.name,
+    //             icon: frame.icon,
+    //             children: [],
+    //             droppable: false,
+    //             draggable: true,
+    //             data: matchingAppInfo.length > 0 ? matchingAppInfo[0] : {},
+    //             style: { color: "#a1a1a1" }
+    //         };
+    //     }
+    // });
 
     return Object.values(frameGroups);
 }

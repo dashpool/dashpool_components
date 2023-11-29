@@ -1,6 +1,6 @@
 {
   "name": "dashpool_components",
-  "version": "0.0.53",
+  "version": "0.0.54",
   "description": "Custom Components for Dashpool",
   "main": "index.ts",
   "repository": {
