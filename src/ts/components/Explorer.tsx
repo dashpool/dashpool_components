@@ -13,6 +13,7 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { MultiSelect } from 'primereact/multiselect';
 import { SelectItem } from 'primereact/selectitem';
+import { ProgressBar } from 'primereact/progressbar';
 
 
 import { useDashpoolData } from './DashpoolProvider';
@@ -69,14 +70,26 @@ const Explorer = (props: ExplorerProps) => {
   const cm = useRef<ContextMenu>(null);
   const explorer = useRef<Tree>(null);
 
+  const progress = useRef<ProgressBar>(null);
+
   const [contextMenuItems, _setContextMenuItems] = useState<MenuItem[]>([]);
 
 
+  const showProgress = (show: boolean) => {
+    const visibility = show ? "visible" : "hidden";
+    const element = progress.current?.getElement();
+    if (element) {
+      element.style.setProperty("visibility", visibility);
+    }
+  }
+
   useEffect(() => {
+    showProgress(false);
     setInternalNodes(buildExplorerTree(nodes));
   }, [props.nodes])
 
   const handleRefresh = () => {
+    showProgress(true);
     const newNRefreshed = nRefreshed + 1;
     setNRefreshed(newNRefreshed);
 
@@ -521,6 +534,8 @@ const Explorer = (props: ExplorerProps) => {
 
   return (
     <div id={id} style={{ width: "100%", height: "100%" }} onKeyDown={handleKeyDown}>
+      <ProgressBar ref={progress} mode="indeterminate" style={{ height: "4px", marginTop: "-5px", marginBottom: "3px", visibility: "hidden" }}></ProgressBar>
+
       {/* Node Context menu */}
       <ContextMenu ref={cm} model={contextMenuItems} ></ContextMenu>
 

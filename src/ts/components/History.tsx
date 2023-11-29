@@ -7,6 +7,7 @@ import { ContextMenu } from 'primereact/contextmenu';
 import { MenuItem } from 'primereact/menuitem';
 import { Button } from 'primereact/button';
 import { useDashpoolData } from './DashpoolProvider';
+import { ProgressBar } from 'primereact/progressbar';
 
 import { setDashpoolEvent, DashpoolEvent, TreeViewNode, findTreeViewNode, buildHistoryTree, findTargetElement, generateUniqueId } from '../helper';
 import { TreeNode } from 'primereact/treenode';
@@ -59,6 +60,7 @@ const History = (props: HistoryProps) => {
   const [internalNodes, setInternalNodes] = useState<TreeNode[]>([]);
 
   useEffect(() => {
+    showProgress(false);
     setInternalNodes(buildHistoryTree(nodes, sharedData?.frames || [], sharedData?.apps || []));
   }, [sharedData, props.nodes])
 
@@ -66,11 +68,23 @@ const History = (props: HistoryProps) => {
   const cm = useRef<ContextMenu>(null);
   const hist = useRef<Tree>(null);
 
+  const progress = useRef<ProgressBar>(null);
+
 
   const [contextMenuItems, _setContextMenuItems] = useState<MenuItem[]>([]);
 
+  const showProgress = (show: boolean) => {
+    const visibility = show ? "visible" : "hidden";
+    const element = progress.current?.getElement();
+    if (element) {
+      element.style.setProperty("visibility", visibility);
+    }
+  }
+
 
   const handleRefresh = () => {
+    showProgress(true);
+    
     const newNRefreshed = nRefreshed + 1;
     setNRefreshed(newNRefreshed);
 
@@ -82,6 +96,7 @@ const History = (props: HistoryProps) => {
 
 
   const handleClear = () => {
+    showProgress(true);
     const newNCleared = nCleared + 1;
     setNCleared(newNCleared);
 
@@ -95,6 +110,7 @@ const History = (props: HistoryProps) => {
 
 
   useEffect(() => {
+    
     const container = hist.current.getElement();
 
     const handleDragStart = (ev: DragEvent) => {
@@ -168,6 +184,8 @@ const History = (props: HistoryProps) => {
 
   return (
     <div id={id} style={{ width: "100%", height: "100%" }}>
+      <ProgressBar ref={progress} mode="indeterminate" style={{ height: "4px", marginTop: "-5px", marginBottom: "3px", visibility: "hidden" }}></ProgressBar>
+
       {/* Node Context menu */}
       <ContextMenu ref={cm} model={contextMenuItems} ></ContextMenu>
 
