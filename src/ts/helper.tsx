@@ -274,6 +274,10 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
     // also add frames without nodes
     frameInfo.forEach((frame) => {
         if (!frameGroups[frame.id]) {
+
+
+            const matchingAppInfo = appInfo.filter((el) => el.url === frame.url);
+
             frameGroups[frame.id] = {
                 id: frame.id,
                 key: frame.id,
@@ -282,7 +286,7 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
                 children: [],
                 droppable: false,
                 draggable: true,
-                data: {},
+                data: matchingAppInfo.length > 0 ? matchingAppInfo[0] : {},
                 style: { color: "#a1a1a1" }
             };
         }
