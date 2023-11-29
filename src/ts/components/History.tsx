@@ -57,11 +57,13 @@ const History = (props: HistoryProps) => {
   const [nRefreshed, setNRefreshed] = useState(props.n_refreshed || 0);
   const [nCleared, setNCleared] = useState(props.n_cleared || 0);
 
+  const [hiddenFrames, setHiddenFrames] = useState<string[]>([]);
+
   const [internalNodes, setInternalNodes] = useState<TreeNode[]>([]);
 
   useEffect(() => {
     showProgress(false);
-    setInternalNodes(buildHistoryTree(nodes, sharedData?.frames || [], sharedData?.apps || []));
+    setInternalNodes(buildHistoryTree(nodes, sharedData?.frames || [], sharedData?.apps || [], hiddenFrames));
   }, [sharedData, props.nodes])
 
 
@@ -96,6 +98,8 @@ const History = (props: HistoryProps) => {
 
 
   const handleClear = () => {
+    setHiddenFrames(sharedData.frames.map((f) => f.id));
+      
     showProgress(true);
     const newNCleared = nCleared + 1;
     setNCleared(newNCleared);

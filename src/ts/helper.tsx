@@ -208,7 +208,7 @@ function buildExplorerTree(treeViewNodes: TreeViewNode[]): TreeNode[] {
 
 
 
-function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[], appInfo: AppInfo[]): TreeNode[] {
+function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[], appInfo: AppInfo[], hiddenFrames: string[]): TreeNode[] {
     const frameGroups: { [key: string]: TreeNode } = {};
 
     treeViewNodes.forEach((node) => {
@@ -273,7 +273,7 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
 
     // also add frames without nodes
     frameInfo.forEach((frame) => {
-        if (!frameGroups[frame.id]) {
+        if (!frameGroups[frame.id] && !hiddenFrames.includes(frame.id)) {
 
             try {
                 const url = frame.url;
