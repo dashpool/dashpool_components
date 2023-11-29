@@ -275,8 +275,9 @@ function buildHistoryTree(treeViewNodes: TreeViewNode[], frameInfo: FrameInfo[],
     frameInfo.forEach((frame) => {
         if (!frameGroups[frame.id]) {
 
-
-            const matchingAppInfo = appInfo.filter((el) => el.url === frame.url);
+            const url = frame.url;
+            const baseurl = url.slice(0, url.lastIndexOf('/') + 1);
+            const matchingAppInfo = appInfo.filter((el) => el.url === baseurl);
 
             frameGroups[frame.id] = {
                 id: frame.id,
