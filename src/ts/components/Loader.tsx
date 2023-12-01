@@ -89,7 +89,7 @@ const Loader = (props: LoaderProps) => {
       })
         .then((response) => response.json())
         .then((jsonData) => {
-          console.log("jsonData", jsonData);
+          
           // Extract the desired data from the JSON response
           const extractedData = ("multi" in jsonData && jsonData.multi) ? extractData(jsonData.response, output) : jsonData;
 
