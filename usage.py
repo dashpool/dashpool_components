@@ -3,6 +3,7 @@ import dash_lumino_components as dlc
 import dash_express_components as dxc
 from dash import html, dcc, Input, Output
 from dash.exceptions import PreventUpdate
+from flask import request, jsonify
 import json
 
 import dashpool_components
@@ -240,7 +241,8 @@ def layout(): return dashpool_components.DashpoolProvider([
                 allowDeselect=True)
 
         ], id="splitPanel")
-    ], "boxPanel", addToDom=True)
+    ], "boxPanel", addToDom=True),
+    dashpool_components.Chat(id="chat", messages=[], url="/echo")
 ], id="context")
 
 
@@ -333,6 +335,19 @@ def update_initial_data(input):
     if input > 2:
         raise PreventUpdate()
     return {"apps": apps, "frames": frames, "groups": groups, "users": users}
+
+
+
+@app.server.route('/echo', methods=['POST'])
+def echo_message():
+    try:
+        messages = request.get_json()
+        last_message = messages[-1]
+        
+        return jsonify([{'role': 'assistant', 'content': last_message['content']}])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 
 if __name__ == '__main__':
