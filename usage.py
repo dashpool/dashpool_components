@@ -242,7 +242,7 @@ def layout(): return dashpool_components.DashpoolProvider([
 
         ], id="splitPanel")
     ], "boxPanel", addToDom=True),
-    dashpool_components.Chat(id="chat", messages=[], url="/echo")
+    dashpool_components.Chat(id="chat", messages=[], url="/ai")
 ], id="context")
 
 
@@ -338,13 +338,35 @@ def update_initial_data(input):
 
 
 
-@app.server.route('/echo', methods=['POST'])
-def echo_message():
+@app.server.route('/ai', methods=['POST'])
+def ai():
     try:
+
+        import os
+        os.environ['OPENAI_API_KEY'] = "sk-XXXXXXXXXXXXXXXXXXXX"
+        os.environ['OPENAI_BASE_URL'] = "http://localhost:8080/v1"
+
+        import openai
+
         messages = request.get_json()
-        last_message = messages[-1]
-        
-        return jsonify([{'role': 'assistant', 'content': last_message['content']}])
+
+        if messages[0]["role"] != "system":
+            messages = [
+                {"role": "system", "content": "You are Dashpool Chat AI. A friendly helper that guides you through complicated Dashpool tasks."},
+                *messages
+            ]
+
+        response = openai.chat.completions.create(
+            
+                model="gpt-3.5-turbo",
+                messages=messages,
+                temperature=0.2,
+                top_p=0.1
+        )
+
+        res_message = response.choices[0].message
+
+        return jsonify([{'role': 'assistant', 'content': res_message.content}])
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

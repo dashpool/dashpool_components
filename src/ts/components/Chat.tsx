@@ -74,6 +74,10 @@ const Chat = (props: LoaderProps) => {
                 } else if (message.role === 'assistant') {
                     // If the role is assistant, add the message to the chat
                     addResponseMessage(message.content);
+                    messages.push({
+                        role: 'assistant', 
+                        content: message.content
+                    })
                 }
             });
 
