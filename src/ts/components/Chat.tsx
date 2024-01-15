@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Widget, addResponseMessage, deleteMessages, toggleMsgLoader, toggleInputDisabled, setQuickButtons } from 'react-chat-widget';
+import { DashpoolEvent, TreeViewNode } from '../helper';
+import { useDashpoolData } from './DashpoolProvider';
 import '../chat.css';
 
 
@@ -25,15 +27,33 @@ type LoaderProps = {
     */
     title: any;
 
+    /**
+     * Event if a Tree Node changes
+     */
+    nodeChangeEvent?: TreeViewNode;
+
+    /**
+     * latest Dashpool Event
+     */
+    dashpoolEvent?: DashpoolEvent
+
     setProps: (props: Record<string, any>) => void;
 }
 
+async function fireEventsWithDelay(events, setPropsFunction) {
+    for (const event of events) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        setPropsFunction(event);
+    }
+}
 
 /**
  * Component to serve as Loader for Graphs
  */
 const Chat = (props: LoaderProps) => {
     const { id, url, messages, title, setProps } = props;
+
+    const { sharedData, updateSharedData } = useDashpoolData();
 
     const [currentMessages, setCurrentMessages] = useState(messages);
     const [inputDisabled, setInputDisabled] = useState(false);
@@ -67,7 +87,10 @@ const Chat = (props: LoaderProps) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(currentMessages),
+                body: JSON.stringify(
+                    [{role: "sharedData", content: sharedData },
+                    ...currentMessages
+                ]),
             });
 
             if (!response.ok) {
@@ -83,6 +106,8 @@ const Chat = (props: LoaderProps) => {
             // Parse the response as JSON
             const result = await response.json();
 
+            let events = [];
+
             // Process the messages in the result
             result.forEach((message: any) => {
                 if (message.role === 'function') {
@@ -96,8 +121,17 @@ const Chat = (props: LoaderProps) => {
                         content: message.content
                     })
                     setCurrentMessages(currentMessages);
+                } else if (message.role === 'dashpoolEvent') {
+                    // the ai can also fire events, like open windows
+                    events.push({dashpoolEvent: message.content})
+                } else if (message.role === 'nodeChangeEvent') {
+                    // the ai can also fire node changes in the explorer
+                    events.push({nodeChangeEvent: message.content})
                 }
             });
+
+            // fire the events
+            await fireEventsWithDelay(events, setProps);
 
         } catch (error) {
 
@@ -147,6 +181,7 @@ ${error.toString()}
 
         <div>
             <Widget
+                id={id}
                 title={title}
                 handleNewUserMessage={handleNewUserMessage}
                 handleQuickButtonClicked={handleQuickButton}
