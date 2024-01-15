@@ -418,15 +418,6 @@ def update_initial_data(input):
 @app.server.route("/ai", methods=["POST"])
 def ai():
 
-    return jsonify(
-        [
-            {"role": "dashpoolEvent", "content": {"type": "test"}},
-            {"role": "nodeChangeEvent", "content": {"timestamp": "?", "type": "open"}},
-            {"role": "assistant", "content": "Just testing"},
-        ]
-    )
-
-
     try:
         import os
 
