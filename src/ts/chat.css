@@ -1059,7 +1059,7 @@
     background: rgba(0, 0, 0, .75);
     overflow: hidden;
     position: fixed;
-    z-index: 9999;
+    z-index: 1000;
     left: 0;
     top: 0
 }
@@ -1207,7 +1207,7 @@
     margin: 0 20px 20px 0;
     position: fixed;
     right: 0;
-    z-index: 9999
+    z-index: 1000
 }
 
 .rcw-full-screen {
