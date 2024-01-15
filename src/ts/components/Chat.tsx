@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Widget, addResponseMessage, deleteMessages } from 'react-chat-widget';
+import { Widget, addResponseMessage, deleteMessages, toggleMsgLoader, toggleInputDisabled, setQuickButtons } from 'react-chat-widget';
 import '../chat.css';
 
 
@@ -35,32 +35,49 @@ type LoaderProps = {
 const Chat = (props: LoaderProps) => {
     const { id, url, messages, title, setProps } = props;
 
+    const [currentMessages, setCurrentMessages] = useState(messages);
+    const [inputDisabled, setInputDisabled] = useState(false);
     // State to manage user input
     const [userInput, setUserInput] = useState('');
 
     // Function to handle user input
     const handleNewUserMessage = async (newMessage: string) => {
         // Add the user's message to the messages array
-        messages.push({
+
+        currentMessages.push({
             role: "user",
             content: newMessage
         });
+        setCurrentMessages(currentMessages);
+
 
         // Clear the user input
         setUserInput('');
 
         try {
             // Make a POST request to the specified URL with the user's message
+
+
+            toggleMsgLoader();
+            toggleInputDisabled();
+            setInputDisabled(true);
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(messages),
+                body: JSON.stringify(currentMessages),
             });
 
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+
+                let error_message = 'Network response was not ok';
+
+                const err_result = response.json();
+                error_message = err_result["error"];
+
+                throw new Error(error_message);
             }
 
             // Parse the response as JSON
@@ -74,30 +91,65 @@ const Chat = (props: LoaderProps) => {
                 } else if (message.role === 'assistant') {
                     // If the role is assistant, add the message to the chat
                     addResponseMessage(message.content);
-                    messages.push({
-                        role: 'assistant', 
+                    currentMessages.push({
+                        role: 'assistant',
                         content: message.content
                     })
+                    setCurrentMessages(currentMessages);
                 }
             });
 
         } catch (error) {
-            console.error('Error:', error);
+
             // Handle errors, display an error message in the chat, etc.
-            addResponseMessage('Sorry, an error occurred while processing your request.');
+            const errorMessage = `
+Sorry, an error occurred while processing your request.
+
+\`\`\`
+${error.toString()}
+\`\`\`
+`;
+
+            addResponseMessage(errorMessage);
+
+            currentMessages.push({
+                role: 'assistant',
+                content: errorMessage
+            })
+            setCurrentMessages(currentMessages);
+
+        }
+
+        toggleMsgLoader();
+        toggleInputDisabled();
+        setInputDisabled(false);
+    };
+
+    const handleQuickButton = (value: any) => {
+        if (!inputDisabled) {
+            if (value == "clearall") {
+                deleteMessages(currentMessages.length);
+                setCurrentMessages([])
+            }
+
+            if (value == "removelast") {
+                deleteMessages(1);
+                currentMessages.pop()
+                setCurrentMessages(currentMessages)
+            }
         }
     };
 
-    const handleToggle = () => {
-        deleteMessages(messages.length);
-    };
+    setQuickButtons([{ label: 'Clear last', value: 'removelast' }, { label: 'Clear all', value: 'clearall' }])
 
     return (
+
+
         <div>
             <Widget
                 title={title}
                 handleNewUserMessage={handleNewUserMessage}
-                handleToggle={handleToggle}
+                handleQuickButtonClicked={handleQuickButton}
                 emojis={false}
                 resizable={false}
                 showTimeStamp={false}
