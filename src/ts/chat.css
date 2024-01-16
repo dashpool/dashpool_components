@@ -188,9 +188,6 @@
         position: relative
     }
 
-    .rcw-conversation-container .rcw-title {
-        padding: 0 0 15px
-    }
 
     .rcw-conversation-container .rcw-close-button {
         background-color: #f5681b;
@@ -416,7 +413,8 @@
 
 @media screen and (max-width:800px) {
     .quick-buttons-container {
-        padding-bottom: 15px
+        padding-bottom: 15px;
+        overflow-y: hidden;
     }
 }
 
@@ -1060,6 +1058,12 @@
     .rcw-hide-sm {
         display: none
     }
+
+    .rcw-conversation-container {
+        width: 100vw;
+    }
+
+
 }
 
 .rcw-previewer-container {

@@ -176,10 +176,13 @@ ${error.toString()}
 
     setQuickButtons([{ label: 'Clear last', value: 'removelast' }, { label: 'Clear all', value: 'clearall' }])
 
+
+    const vis = (url === "" ) ? "hidden": "visible";
+
     return (
 
 
-        <div>
+        <div style={{visibility: vis}}>
             <Widget
                 id={id}
                 title={title}
@@ -197,7 +200,8 @@ ${error.toString()}
 
 Chat.defaultProps = {
     title: "Dashpool Chat AI",
-    messages: []
+    messages: [],
+    url:""
 };
 
 export default Chat;
