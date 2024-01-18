@@ -3,8 +3,10 @@ import dash_lumino_components as dlc
 import dash_express_components as dxc
 from dash import html, dcc, Input, Output
 from dash.exceptions import PreventUpdate
-from flask import request, jsonify
+from flask import jsonify, Response
 import json
+import time
+import uuid 
 
 import dashpool_components
 import json
@@ -417,35 +419,44 @@ def update_initial_data(input):
 
 @app.server.route("/ai", methods=["POST"])
 def ai():
+    if random.random() < 1.5:  # 50% chance of sending a chunked response with larger text
+        return send_chunked_response()
+    else:
+        return jsonify([{"role": "assistant", "content": "Hello"}])
 
-    try:
-        import os
 
-        os.environ["OPENAI_API_KEY"] = "sk-XXXXXXXXXXXXXXXXXXXX"
-        os.environ["OPENAI_BASE_URL"] = "http://localhost:8080/v1"
+def send_chunked_response():
+    def generate_chunks():
+        message_id = str(uuid.uuid4()) 
+        yield f'[{{"role": "assistant", "id": "{message_id}",  "content": "'
 
-        import openai
+        # Generating and sending chunks of larger text
+        large_text = "aaa aaa aaa aaa aa aaa a aa a aaaa  aaa "*20
+        chunk_size = 20  # You can adjust the chunk size based on your needs
+        for i in range(0, len(large_text), chunk_size):
+            time.sleep(0.1)
+            yield large_text[i:i + chunk_size]
 
-        messages = request.get_json()
+        message_id = str(uuid.uuid4()) 
+        yield f'"}}, {{"role": "dashpoolEvent":  "id": "{message_id}",  "content": {"test": 1, "versuch": "super"}}}'
 
-        if messages[0]["role"] != "system":
-            messages = [
-                {
-                    "role": "system",
-                    "content": "You are Dashpool Chat AI. A friendly helper that guides you through complicated Dashpool tasks.",
-                },
-                *messages,
-            ]
+        time.sleep(.5)
+        message_id = str(uuid.uuid4()) 
+        yield f',{{"role": "assistant", "id": "{message_id}",  "content": "'
 
-        response = openai.chat.completions.create(
-            model="gpt-3.5-turbo", messages=messages, temperature=0.2, top_p=0.1
-        )
+        large_text = "bb bbbbb bbb bbbbb b b bbb bbbbbb b bbbb  "*20
+        chunk_size = 20  # You can adjust the chunk size based on your needs
+        for i in range(0, len(large_text), chunk_size):
+            time.sleep(0.1)
+            yield large_text[i:i + chunk_size]
 
-        res_message = response.choices[0].message
 
-        return jsonify([{"role": "assistant", "content": res_message.content}])
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        yield '"}]'
+
+        
+    return Response(generate_chunks(), content_type="application/json")
+
+
 
 
 if __name__ == "__main__":

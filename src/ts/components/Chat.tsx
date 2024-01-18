@@ -45,6 +45,44 @@ async function fireEventsWithDelay(events, setPropsFunction) {
         await new Promise(resolve => setTimeout(resolve, 100));
         setPropsFunction(event);
     }
+    events.length = 0;
+}
+
+
+
+function handleStringResult(new_result, known_ids, events) {
+
+    const jsonObjects = new_result.match(/\{.*?\}/g);
+
+    console.log(new_result, jsonObjects, known_ids);
+
+    if (jsonObjects) {
+        // Process each complete JSON object
+        for (const jsonObject of jsonObjects) {
+            const message = JSON.parse(jsonObject);
+
+            if (message.role === "assistant") {
+                if (known_ids.includes(message.id)) {
+                    deleteMessages(1, message.id)
+                } else {
+                    known_ids.push(message.id)
+                }
+                addResponseMessage(message.content, message.id)
+            } else if (message.role === 'dashpoolEvent') {
+                
+                if (!known_ids.includes(message.id)) {
+                    known_ids.push(message.id)
+                    events.push({dashpoolEvent: message.content, id:message.id})
+                }
+            } else if (message.role === 'nodeChangeEvent') {
+                if (!known_ids.includes(message.id)) {
+                    known_ids.push(message.id)
+                events.push({nodeChangeEvent: message.content, id:message.id})
+                }
+            } 
+        }
+    }
+
 }
 
 /**
@@ -53,6 +91,7 @@ async function fireEventsWithDelay(events, setPropsFunction) {
 const Chat = (props: LoaderProps) => {
     const { id, url, messages, title, setProps } = props;
 
+
     const { sharedData, updateSharedData } = useDashpoolData();
 
     const [currentMessages, setCurrentMessages] = useState(messages);
@@ -60,25 +99,23 @@ const Chat = (props: LoaderProps) => {
     // State to manage user input
     const [userInput, setUserInput] = useState('');
 
-    // Function to handle user input
-    const handleNewUserMessage = async (newMessage: string) => {
-        // Add the user's message to the messages array
-
-        currentMessages.push({
-            role: "user",
-            content: newMessage
-        });
-        setCurrentMessages(currentMessages);
 
 
-        // Clear the user input
+
+
+
+
+
+    const handleNewUserMessage = async (newMessage) => {
+        setCurrentMessages((prevMessages) => [
+            ...prevMessages,
+            { role: 'user', content: newMessage },
+        ]);
+
         setUserInput('');
 
         try {
-            // Make a POST request to the specified URL with the user's message
-
-
-            toggleMsgLoader();
+            
             toggleInputDisabled();
             setInputDisabled(true);
 
@@ -87,77 +124,65 @@ const Chat = (props: LoaderProps) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(
-                    [{role: "sharedData", content: sharedData },
-                    ...currentMessages
+                body: JSON.stringify([
+                    { role: 'sharedData', content: sharedData },
+                    ...currentMessages,
                 ]),
             });
 
             if (!response.ok) {
-
                 let error_message = 'Network response was not ok';
 
-                const err_result = response.json();
-                error_message = err_result["error"];
+                const err_result = await response.json();
+                error_message = err_result['error'];
 
                 throw new Error(error_message);
             }
 
-            // Parse the response as JSON
-            const result = await response.json();
-
+            const reader = response.body.getReader();
+            let chunk;
+            let result = '';
+            let known_ids = [];
             let events = [];
+                  
 
-            // Process the messages in the result
-            result.forEach((message: any) => {
-                if (message.role === 'function') {
-                    // If the role is function, make a function call
-                    // Implement your function call logic here
-                } else if (message.role === 'assistant') {
-                    // If the role is assistant, add the message to the chat
-                    addResponseMessage(message.content);
-                    currentMessages.push({
-                        role: 'assistant',
-                        content: message.content
-                    })
-                    setCurrentMessages(currentMessages);
-                } else if (message.role === 'dashpoolEvent') {
-                    // the ai can also fire events, like open windows
-                    events.push({dashpoolEvent: message.content})
-                } else if (message.role === 'nodeChangeEvent') {
-                    // the ai can also fire node changes in the explorer
-                    events.push({nodeChangeEvent: message.content})
+
+
+            while (!(chunk = await reader.read()).done) {
+                // Handle each chunk of the response
+                const chunkText = new TextDecoder('utf-8').decode(chunk.value);
+                result += chunkText;
+
+                try {
+                    // Attempt to find complete JSON objects in the result
+                    handleStringResult(result + "\"}", known_ids, events);
+
+                    await fireEventsWithDelay(events, setProps);
+
+                } catch (error) {
+                    // Handle JSON parsing errors if necessary
                 }
-            });
 
-            // fire the events
-            await fireEventsWithDelay(events, setProps);
-
+                await fireEventsWithDelay(events, setProps);
+            }
         } catch (error) {
-
-            // Handle errors, display an error message in the chat, etc.
             const errorMessage = `
-Sorry, an error occurred while processing your request.
-
-\`\`\`
-${error.toString()}
-\`\`\`
-`;
-
+            Sorry, an error occurred while processing your request.
+          `;
             addResponseMessage(errorMessage);
-
-            currentMessages.push({
-                role: 'assistant',
-                content: errorMessage
-            })
-            setCurrentMessages(currentMessages);
-
+            setCurrentMessages((prevMessages) => [
+                ...prevMessages,
+                { role: 'assistant', content: errorMessage },
+            ]);
         }
 
-        toggleMsgLoader();
+        
         toggleInputDisabled();
         setInputDisabled(false);
     };
+
+
+
 
     const handleQuickButton = (value: any) => {
         if (!inputDisabled) {
@@ -177,12 +202,12 @@ ${error.toString()}
     setQuickButtons([{ label: 'Clear last', value: 'removelast' }, { label: 'Clear all', value: 'clearall' }])
 
 
-    const vis = (url === "" ) ? "hidden": "visible";
+    const vis = (url === "") ? "hidden" : "visible";
 
     return (
 
 
-        <div style={{visibility: vis}}>
+        <div style={{ visibility: vis }}>
             <Widget
                 id={id}
                 title={title}
@@ -201,7 +226,7 @@ ${error.toString()}
 Chat.defaultProps = {
     title: "Dashpool Chat AI",
     messages: [],
-    url:""
+    url: ""
 };
 
 export default Chat;
