@@ -27,6 +27,8 @@
     margin-left: auto
 }
 
+
+
 .rcw-client .rcw-message-text {
     background-color: #eeeeee;
     border-radius: 5px;
@@ -51,6 +53,7 @@
 .rcw-response .rcw-message-text {
     background-color: #ffdcc6;
     border-radius: 5px;
+    min-height: 40px;
     padding: 8px;
     text-align: left;
     box-shadow: rgba(100, 100, 100, 0.3) 0px 2px 3px 0px;
@@ -277,8 +280,29 @@
     overflow-y: scroll;
     padding-top: 5px;
     -webkit-overflow-scrolling: touch;
+}
+
+/* Pseudo-element to ensure scrollbar always appears */
+.rcw-message {
+    top: 100%;
+    position: relative;
+    padding-bottom: 5px;
+}
+
+.rcw-messages-container::before {
+    content: "";
+    visibility: hidden;
+    position: absolute;
+    width: 1px;
+    height: 101%;
 
 }
+
+.rcw-messages-container {
+    position: relative;
+    top: 0;
+}
+/* Pseudo-element to ensure scrollbar always appears */
 
 .rcw-full-screen .rcw-messages-container {
     height: 100%;
@@ -307,7 +331,7 @@
     position: relative
 }
 
-.rcw-sender > button:first-child {
+.rcw-sender>button:first-child {
     visibility: hidden;
 }
 

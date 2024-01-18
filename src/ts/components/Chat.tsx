@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Widget, addResponseMessage, deleteMessages, toggleMsgLoader, toggleInputDisabled, setQuickButtons } from 'react-chat-widget';
+import {scrollTo}
 import { DashpoolEvent, TreeViewNode } from '../helper';
 import { useDashpoolData } from './DashpoolProvider';
 import '../chat.css';
