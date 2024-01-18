@@ -52,35 +52,52 @@ async function fireEventsWithDelay(events, setPropsFunction) {
 
 function handleStringResult(new_result, known_ids, events) {
 
-    const jsonObjects = new_result.match(/\{.*?\}/g);
-
-    console.log(new_result, jsonObjects, known_ids);
+    const jsonObjects = new_result.split('\n');
 
     if (jsonObjects) {
-        // Process each complete JSON object
-        for (const jsonObject of jsonObjects) {
-            const message = JSON.parse(jsonObject);
 
-            if (message.role === "assistant") {
-                if (known_ids.includes(message.id)) {
-                    deleteMessages(1, message.id)
-                } else {
-                    known_ids.push(message.id)
+        // Process each complete JSON object
+        for (let jsonObject of jsonObjects) {
+
+            try {
+
+                // Remove a trailing comma, if present
+                jsonObject = jsonObject.replace(/,\s*$/, '');
+
+                // Check if the string contains the word "assistant"
+                if (jsonObject.includes("assistant")) {
+                    // Check if the string already ends with "}
+                    if (!jsonObject.endsWith('"}')) {
+                        // Add "} to the end
+                        jsonObject += '"}';
+                    }
                 }
-                addResponseMessage(message.content, message.id)
-            } else if (message.role === 'dashpoolEvent') {
-                
-                if (!known_ids.includes(message.id)) {
-                    known_ids.push(message.id)
-                    events.push({dashpoolEvent: message.content, id:message.id})
+
+                const message = JSON.parse(jsonObject);
+
+                if (message.role === "assistant") {
+                    if (known_ids.includes(message.id)) {
+                        deleteMessages(1, message.id)
+                    } else {
+                        known_ids.push(message.id)
+                    }
+                    addResponseMessage(message.content, message.id)
+                } else if (message.role === 'dashpoolEvent') {
+
+                    if (!known_ids.includes(message.id)) {
+                        known_ids.push(message.id)
+                        events.push({ dashpoolEvent: message.content })
+                    }
+                } else if (message.role === 'nodeChangeEvent') {
+                    if (!known_ids.includes(message.id)) {
+                        known_ids.push(message.id)
+                        events.push({ nodeChangeEvent: message.content })
+                    }
                 }
-            } else if (message.role === 'nodeChangeEvent') {
-                if (!known_ids.includes(message.id)) {
-                    known_ids.push(message.id)
-                events.push({nodeChangeEvent: message.content, id:message.id})
-                }
-            } 
+
+            } catch (error) { }
         }
+
     }
 
 }
@@ -112,10 +129,21 @@ const Chat = (props: LoaderProps) => {
             { role: 'user', content: newMessage },
         ]);
 
+        currentMessages.push({
+            role: "user",
+            content: newMessage
+        });
+        setCurrentMessages(currentMessages);
+
+
         setUserInput('');
+        let result = '';
+        let chunk;
+        let known_ids = [];
+        let events = [];        
 
         try {
-            
+
             toggleInputDisabled();
             setInputDisabled(true);
 
@@ -140,12 +168,6 @@ const Chat = (props: LoaderProps) => {
             }
 
             const reader = response.body.getReader();
-            let chunk;
-            let result = '';
-            let known_ids = [];
-            let events = [];
-                  
-
 
 
             while (!(chunk = await reader.read()).done) {
@@ -155,11 +177,12 @@ const Chat = (props: LoaderProps) => {
 
                 try {
                     // Attempt to find complete JSON objects in the result
-                    handleStringResult(result + "\"}", known_ids, events);
+                    handleStringResult(result, known_ids, events);
 
                     await fireEventsWithDelay(events, setProps);
 
                 } catch (error) {
+                    console.log(error);
                     // Handle JSON parsing errors if necessary
                 }
 
@@ -174,9 +197,41 @@ const Chat = (props: LoaderProps) => {
                 ...prevMessages,
                 { role: 'assistant', content: errorMessage },
             ]);
+
+            toggleInputDisabled();
+            setInputDisabled(false);
+            return;
         }
 
         
+        const j_result = JSON.parse(result);
+        j_result.forEach((message: any) => {
+            if (message.role === 'assistant') {
+
+                currentMessages.push({
+                    role: 'assistant',
+                    content: message.content
+                })
+
+                if (!known_ids.includes(message.id)) {
+                    addResponseMessage(message.content, message.id)
+                }
+
+            } else if (message.role === 'dashpoolEvent') {
+
+                if (!known_ids.includes(message.id)) {
+                    events.push({ dashpoolEvent: message.content })
+                }
+            } else if (message.role === 'nodeChangeEvent') {
+                if (!known_ids.includes(message.id)) {
+                    events.push({ nodeChangeEvent: message.content })
+                }
+            }
+        })
+
+        setCurrentMessages(currentMessages);
+        await fireEventsWithDelay(events, setProps);
+
         toggleInputDisabled();
         setInputDisabled(false);
     };

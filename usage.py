@@ -419,39 +419,40 @@ def update_initial_data(input):
 
 @app.server.route("/ai", methods=["POST"])
 def ai():
-    if random.random() < 1.5:  # 50% chance of sending a chunked response with larger text
+    if random.random() < 0.5:  # 50% chance of sending a chunked response with larger text
         return send_chunked_response()
     else:
-        return jsonify([{"role": "assistant", "content": "Hello"}])
+        message_id = str(uuid.uuid4()) 
+        return jsonify([{"role": "assistant", "id": message_id, "content": "Hello"}])
 
 
 def send_chunked_response():
     def generate_chunks():
         message_id = str(uuid.uuid4()) 
-        yield f'[{{"role": "assistant", "id": "{message_id}",  "content": "'
+        yield f'[\n{{"role": "assistant", "id": "{message_id}",  "content": "'
 
         # Generating and sending chunks of larger text
-        large_text = "aaa aaa aaa aaa aa aaa a aa a aaaa  aaa "*20
+        large_text = "aaa aaa aaa aaa aa aaa a aa a aaaa  aaa "*3
         chunk_size = 20  # You can adjust the chunk size based on your needs
         for i in range(0, len(large_text), chunk_size):
             time.sleep(0.1)
             yield large_text[i:i + chunk_size]
 
         message_id = str(uuid.uuid4()) 
-        yield f'"}}, {{"role": "dashpoolEvent":  "id": "{message_id}",  "content": {"test": 1, "versuch": "super"}}}'
+        yield f'"}},\n{{"role": "dashpoolEvent",  "id": "{message_id}",  "content": {{"test": 1, "versuch": "super"}} }}'
 
         time.sleep(.5)
         message_id = str(uuid.uuid4()) 
-        yield f',{{"role": "assistant", "id": "{message_id}",  "content": "'
+        yield f',\n{{"role": "assistant", "id": "{message_id}",  "content": "'
 
-        large_text = "bb bbbbb bbb bbbbb b b bbb bbbbbb b bbbb  "*20
+        large_text = "bb bbbbb bbb bbbbb b b bbb bbbbbb b bbbb  "*3
         chunk_size = 20  # You can adjust the chunk size based on your needs
         for i in range(0, len(large_text), chunk_size):
             time.sleep(0.1)
             yield large_text[i:i + chunk_size]
 
 
-        yield '"}]'
+        yield '"}\n]'
 
         
     return Response(generate_chunks(), content_type="application/json")
