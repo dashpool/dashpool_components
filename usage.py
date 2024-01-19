@@ -432,23 +432,23 @@ def send_chunked_response():
         yield f'[\n{{"role": "assistant", "id": "{message_id}",  "content": "'
 
         # Generating and sending chunks of larger text
-        large_text = "aaa aaa aaa aaa aa aaa a aa a aaaa  aaa "*3
-        chunk_size = 20  # You can adjust the chunk size based on your needs
+        large_text = "aaa aaa aaa aaa aa aaa a aa a aaaa  aaa "*100
+        chunk_size = 3  # You can adjust the chunk size based on your needs
         for i in range(0, len(large_text), chunk_size):
-            time.sleep(0.1)
+            time.sleep(0.05)
             yield large_text[i:i + chunk_size]
 
         message_id = str(uuid.uuid4()) 
         yield f'"}},\n{{"role": "dashpoolEvent",  "id": "{message_id}",  "content": {{"test": 1, "versuch": "super"}} }}'
 
-        time.sleep(.5)
+        time.sleep(.2)
         message_id = str(uuid.uuid4()) 
         yield f',\n{{"role": "assistant", "id": "{message_id}",  "content": "'
 
-        large_text = "bb bbbbb bbb bbbbb b b bbb bbbbbb b bbbb  "*3
-        chunk_size = 20  # You can adjust the chunk size based on your needs
+        large_text = "bb bbbbb bbb bbbbb b b bbb bbbbbb b bbbb  "*30
+        chunk_size = 3  # You can adjust the chunk size based on your needs
         for i in range(0, len(large_text), chunk_size):
-            time.sleep(0.1)
+            time.sleep(0.05)
             yield large_text[i:i + chunk_size]
 
 

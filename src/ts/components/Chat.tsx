@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Widget, addResponseMessage, deleteMessages, toggleMsgLoader, toggleInputDisabled, setQuickButtons } from 'react-chat-widget';
-import {scrollTo}
 import { DashpoolEvent, TreeViewNode } from '../helper';
 import { useDashpoolData } from './DashpoolProvider';
 import '../chat.css';
@@ -119,11 +118,6 @@ const Chat = (props: LoaderProps) => {
 
 
 
-
-
-
-
-
     const handleNewUserMessage = async (newMessage) => {
         setCurrentMessages((prevMessages) => [
             ...prevMessages,
@@ -141,7 +135,7 @@ const Chat = (props: LoaderProps) => {
         let result = '';
         let chunk;
         let known_ids = [];
-        let events = [];        
+        let events = [];
 
         try {
 
@@ -171,23 +165,33 @@ const Chat = (props: LoaderProps) => {
             const reader = response.body.getReader();
 
 
+            let lastHandleStringResultTime = 0;
+
             while (!(chunk = await reader.read()).done) {
                 // Handle each chunk of the response
                 const chunkText = new TextDecoder('utf-8').decode(chunk.value);
                 result += chunkText;
 
-                try {
-                    // Attempt to find complete JSON objects in the result
-                    handleStringResult(result, known_ids, events);
+                const currentTime = Date.now();
+                if (currentTime - lastHandleStringResultTime >= 50) {
+                    lastHandleStringResultTime = currentTime;
+
+                    try {
+                        // Attempt to find complete JSON objects in the result
+                        handleStringResult(result, known_ids, events);
+                        scollToBottom();
+
+                        await fireEventsWithDelay(events, setProps);
+
+
+                    } catch (error) {
+                        console.log(error);
+                        // Handle JSON parsing errors if necessary
+                    }
+
 
                     await fireEventsWithDelay(events, setProps);
-
-                } catch (error) {
-                    console.log(error);
-                    // Handle JSON parsing errors if necessary
                 }
-
-                await fireEventsWithDelay(events, setProps);
             }
         } catch (error) {
             const errorMessage = `
@@ -204,7 +208,7 @@ const Chat = (props: LoaderProps) => {
             return;
         }
 
-        
+
         const j_result = JSON.parse(result);
         j_result.forEach((message: any) => {
             if (message.role === 'assistant') {
@@ -238,7 +242,20 @@ const Chat = (props: LoaderProps) => {
     };
 
 
+    const scollToBottom = () => {
+        // Find the container div using the provided id
+        const containerDiv = document.getElementById(`${id}-container`);
+    
+        if (containerDiv) {
+          // Find the messages div inside the container
+          const messagesDiv = containerDiv.querySelector('#messages');
 
+          if (messagesDiv) {
+            // Scroll to the bottom of the messages div
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+          }
+        }
+      };
 
     const handleQuickButton = (value: any) => {
         if (!inputDisabled) {
@@ -263,7 +280,7 @@ const Chat = (props: LoaderProps) => {
     return (
 
 
-        <div style={{ visibility: vis }}>
+        <div id={id+"-container"} style={{ visibility: vis }}>
             <Widget
                 id={id}
                 title={title}
