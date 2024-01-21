@@ -209,31 +209,36 @@ const Chat = (props: LoaderProps) => {
             return;
         }
 
+        try {
+            const j_result = JSON.parse(result);
 
-        const j_result = JSON.parse(result);
-        j_result.forEach((message: any) => {
-            if (message.role === 'assistant') {
+            j_result.forEach((message: any) => {
+                if (message.role === 'assistant') {
 
-                currentMessages.push({
-                    role: 'assistant',
-                    content: message.content
-                })
+                    currentMessages.push({
+                        role: 'assistant',
+                        content: message.content
+                    })
 
-                if (!known_ids.includes(message.id)) {
-                    addResponseMessage(message.content, message.id)
+                    if (!known_ids.includes(message.id)) {
+                        addResponseMessage(message.content, message.id)
+                    }
+
+                } else if (message.role === 'dashpoolEvent') {
+
+                    if (!known_ids.includes(message.id)) {
+                        events.push({ dashpoolEvent: message.content })
+                    }
+                } else if (message.role === 'nodeChangeEvent') {
+                    if (!known_ids.includes(message.id)) {
+                        events.push({ nodeChangeEvent: message.content })
+                    }
                 }
+            })
 
-            } else if (message.role === 'dashpoolEvent') {
-
-                if (!known_ids.includes(message.id)) {
-                    events.push({ dashpoolEvent: message.content })
-                }
-            } else if (message.role === 'nodeChangeEvent') {
-                if (!known_ids.includes(message.id)) {
-                    events.push({ nodeChangeEvent: message.content })
-                }
-            }
-        })
+        } catch (error) {
+            addResponseMessage("Dashpool Chat AI ERROR!\nPlease restart chat.")
+        }
 
         setCurrentMessages(currentMessages);
         await fireEventsWithDelay(events, setProps);
@@ -246,17 +251,17 @@ const Chat = (props: LoaderProps) => {
     const scrollToBottom = () => {
         // Find the container div using the provided id
         const containerDiv = document.getElementById(`${id}-container`);
-    
-        if (containerDiv) {
-          // Find the messages div inside the container
-          const messagesDiv = containerDiv.querySelector('#messages');
 
-          if (messagesDiv) {
-            // Scroll to the bottom of the messages div
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-          }
+        if (containerDiv) {
+            // Find the messages div inside the container
+            const messagesDiv = containerDiv.querySelector('#messages');
+
+            if (messagesDiv) {
+                // Scroll to the bottom of the messages div
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
         }
-      };
+    };
 
     const handleQuickButton = (value: any) => {
         if (!inputDisabled) {
@@ -281,7 +286,7 @@ const Chat = (props: LoaderProps) => {
     return (
 
 
-        <div id={id+"-container"} style={{ visibility: vis }}>
+        <div id={id + "-container"} style={{ visibility: vis }}>
             <Widget
                 id={id}
                 title={title}
