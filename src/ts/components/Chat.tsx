@@ -130,6 +130,7 @@ const Chat = (props: LoaderProps) => {
         });
         setCurrentMessages(currentMessages);
 
+        setTimeout(scrollToBottom, 100);
 
         setUserInput('');
         let result = '';
@@ -179,7 +180,7 @@ const Chat = (props: LoaderProps) => {
                     try {
                         // Attempt to find complete JSON objects in the result
                         handleStringResult(result, known_ids, events);
-                        scollToBottom();
+                        scrollToBottom();
 
                         await fireEventsWithDelay(events, setProps);
 
@@ -242,7 +243,7 @@ const Chat = (props: LoaderProps) => {
     };
 
 
-    const scollToBottom = () => {
+    const scrollToBottom = () => {
         // Find the container div using the provided id
         const containerDiv = document.getElementById(`${id}-container`);
     
