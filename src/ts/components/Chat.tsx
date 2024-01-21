@@ -130,7 +130,7 @@ const Chat = (props: LoaderProps) => {
         });
         setCurrentMessages(currentMessages);
 
-        setTimeout(scrollToBottom, 100);
+        setTimeout(scrollToBottom, 500);
 
         setUserInput('');
         let result = '';
@@ -237,7 +237,18 @@ const Chat = (props: LoaderProps) => {
             })
 
         } catch (error) {
+            known_ids.forEach(() => {
+                currentMessages.push({
+                    role: 'error',
+                    content: ""
+                })
+            }
+            )
             addResponseMessage("Dashpool Chat AI ERROR!\nPlease restart chat.")
+            currentMessages.push({
+                role: 'assistant',
+                content: "Dashpool Chat AI ERROR!\nPlease restart chat."
+            })
         }
 
         setCurrentMessages(currentMessages);
