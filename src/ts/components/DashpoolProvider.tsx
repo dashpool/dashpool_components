@@ -30,6 +30,7 @@ type SharedData = {
   dragElement?: any,
   apps?: AppInfo[],
   frames?: FrameInfo[],
+  activeFrame?: any,
   users?: string[],
   groups?: UserGroup[]
 };
@@ -69,6 +70,11 @@ type DashpoolProviderProps = {
   sharedData?: SharedData;
 
   /**
+    * widget events
+    */
+  widgetEvent?: any;
+
+  /**
    * Update props to trigger callbacks.
    */
   setProps?: (props: Record<string, any>) => void;
@@ -80,6 +86,9 @@ type DashpoolProviderProps = {
 const DashpoolProvider = (props: DashpoolProviderProps) => {
   const { children } = props;
   const [sharedData, setSharedData] = useState<SharedData>({ ...props.initialData });
+
+
+  let lastWidgetEventTimestamp = useRef(0);
 
   useEffect(() => {
     setSharedData(props.initialData);
@@ -100,6 +109,32 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       props.setProps({ sharedData: sharedData });
     }
   }, [sharedData, props.initialData]);
+
+
+  useEffect(() => {
+
+    if (props.widgetEvent && props.widgetEvent.timestamp > lastWidgetEventTimestamp.current) {
+
+
+      lastWidgetEventTimestamp.current = props.widgetEvent.timestamp;
+      if (props.widgetEvent && props.widgetEvent.type === 'lumino:deleted') {
+        const updatedFrames = sharedData.frames.filter(frame => frame.id !== props.widgetEvent.id);
+        const isCurrentFrameDeleted = sharedData.activeFrame && sharedData.activeFrame.id === props.widgetEvent.id;
+
+        updateSharedData({
+          frames: updatedFrames,
+          activeFrame: isCurrentFrameDeleted ? {} : sharedData.activeFrame,
+        });
+      } else if (props.widgetEvent && props.widgetEvent.type === 'lumino:activated') {
+        const activatedFrame = sharedData.frames.find(frame => frame.id === props.widgetEvent.id);
+        if (activatedFrame) {
+          updateSharedData({
+            activeFrame: activatedFrame
+          });
+        }
+      }
+    }
+  }, [sharedData, props.widgetEvent]);
 
 
   // /// LOGIN section
@@ -211,7 +246,7 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
         header="You are not logged in!"
         modal={true}
         footer={
-          <div style={{marginRight: "-8px"}}>
+          <div style={{ marginRight: "-8px" }}>
             <Button onClick={onHide} className="p-button-secondary">Cancel</Button>
             <Button onClick={initLogin} className="p-button-primary">OK</Button>
           </div>

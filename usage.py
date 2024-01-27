@@ -117,26 +117,33 @@ users = ["User " + str(el) for el in range(10)]
 groups = [{"id": "141234-asdfs-234234", "name": "Test Group"}]
 frames = [
     {
-        "id": "frame1",
+        "id": "d1",
+        "name": "test (1)",
+        "group": "Widgets",
+        "icon": "fa fa-plus",
+        "url": "https://localhost:443/example/",
+    },
+    {
+        "id": "d2",
         "name": "test (2)",
         "group": "Widgets",
         "icon": "fa fa-plus",
         "url": "https://localhost:443/example/",
     },
     {
-        "id": "frame2",
-        "name": "test (2)",
+        "id": "dlA",
+        "name": "loader 1",
         "group": "Widgets",
         "icon": "fa fa-plus",
         "url": "https://localhost:443/example/",
     },
     {
-        "id": "frame3",
-        "name": "nice test",
+        "id": "dlB",
+        "name": "loader 2",
         "group": "Widgets",
         "icon": "fa fa-plus",
         "url": "https://localhost:443/example/",
-    },
+    },    
 ]
 
 historyNodes = [
@@ -415,6 +422,11 @@ def update_initial_data(input):
     if input > 2:
         raise PreventUpdate()
     return {"apps": apps, "frames": frames, "groups": groups, "users": users}
+
+
+@app.callback(Output("context", "widgetEvent"), Input("dock-panel", "widgetEvent"))
+def passWidgetEvent(input):
+    return input
 
 
 @app.server.route("/ai", methods=["POST"])
