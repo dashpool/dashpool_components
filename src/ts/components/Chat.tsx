@@ -281,6 +281,37 @@ const Chat = (props: LoaderProps) => {
                 setCurrentMessages([])
             }
 
+            if (value == "reportproblem") {
+
+                let urlWithParams;
+
+                try {
+                    // Attempt to combine the URL and query parameter
+                    const urlObj = new URL(url);
+                    urlObj.searchParams.set('error', 'true');
+                    urlWithParams = urlObj.toString();
+                } catch (error) {
+                    // Fallback: Combine URL and query parameter manually
+                    urlWithParams = `${url}?error=true`;
+                }
+
+                // Send the modified request
+                const response = fetch(urlWithParams, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify([
+                        { role: 'sharedData', content: sharedData },
+                        ...currentMessages,
+                    ]),
+                });
+
+
+                deleteMessages(currentMessages.length);
+                setCurrentMessages([])
+            }
+
             if (value == "removelast") {
                 deleteMessages(1);
                 currentMessages.pop()
@@ -289,7 +320,7 @@ const Chat = (props: LoaderProps) => {
         }
     };
 
-    setQuickButtons([{ label: 'Clear last', value: 'removelast' }, { label: 'Clear all', value: 'clearall' }])
+    setQuickButtons([{ label: 'Clear last', value: 'removelast' }, { label: 'Clear all', value: 'clearall' }, { label: 'Report problem', value: 'reportproblem' }])
 
 
     const vis = (url === "") ? "hidden" : "visible";

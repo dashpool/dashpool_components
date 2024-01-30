@@ -444,7 +444,7 @@ def send_chunked_response():
         yield f'[\n{{"role": "assistant", "id": "{message_id}",  "content": "'
 
         # Generating and sending chunks of larger text
-        large_text = "aaa aaa aaa aaa aa aaa a aa a aaaa  aaa "*100
+        large_text = "aaa aaa aaa aaa aa aaa a aa a aaaa  aaa "*20
         chunk_size = 3  # You can adjust the chunk size based on your needs
         for i in range(0, len(large_text), chunk_size):
             time.sleep(0.05)
@@ -457,7 +457,7 @@ def send_chunked_response():
         message_id = str(uuid.uuid4()) 
         yield f',\n{{"role": "assistant", "id": "{message_id}",  "content": "'
 
-        large_text = "bb bbbbb bbb bbbbb b b bbb bbbbbb b bbbb  "*30
+        large_text = "bb bbbbb bbb bbbbb b b bbb bbbbbb b bbbb  "*10
         chunk_size = 3  # You can adjust the chunk size based on your needs
         for i in range(0, len(large_text), chunk_size):
             time.sleep(0.05)
