@@ -38,6 +38,11 @@ type ExplorerProps = {
   n_refreshed?: number;
 
   /**
+   * : An integer that represents the number of times the layout has been saved.
+   */
+  n_saved?: number;  
+
+  /**
    * Event if a Tree Node changes
    */
   nodeChangeEvent?: TreeViewNode;
@@ -63,6 +68,7 @@ const Explorer = (props: ExplorerProps) => {
   const { sharedData, updateSharedData } = useDashpoolData();
 
   const [nRefreshed, setNRefreshed] = useState(props.n_refreshed || 0);
+  const [nSaved, setNSaved] = useState(props.n_saved || 0);
 
   let tree = buildExplorerTree(nodes);
   const [internalNodes, setInternalNodes] = useState(tree);
@@ -96,6 +102,18 @@ const Explorer = (props: ExplorerProps) => {
     // Use setProps to send the new value to Python
     if (setProps) {
       setProps({ n_refreshed: newNRefreshed });
+    }
+  };
+
+
+  const handleSave = () => {
+    showProgress(true);
+    const newNSaved = nSaved + 1;
+    setNSaved(newNSaved);
+
+    // Use setProps to send the new value to Python
+    if (setProps) {
+      setProps({ n_saved: newNSaved });
     }
   };
 
@@ -540,6 +558,7 @@ const Explorer = (props: ExplorerProps) => {
       <ContextMenu ref={cm} model={contextMenuItems} ></ContextMenu>
 
       <Button onClick={handleRefresh} icon="fa fa-sync" className='e-tree-reload' rounded />
+      <Button onClick={handleSave} icon="fas fa-save" className='e-layout-save' rounded />
       {/* Main Tree View*/}
       <Tree value={internalNodes} dragdropScope={'dashpool'} ref={explorer}
         className='e-tree-reload'

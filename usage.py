@@ -361,9 +361,13 @@ def print_output(input):
     return json.dumps(input)
 
 
-@app.callback(Output("explorerRefreshed", "children"), Input("explorer", "n_refreshed"))
-def print_output(input):
-    return f"Explorer n_refreshed: {input}"
+@app.callback(
+    Output("explorerRefreshed", "children"),
+    Input("explorer", "n_refreshed"),
+    Input("explorer", "n_saved"),
+)
+def print_output(n_refreshed, n_saved):
+    return f"Explorer n_refreshed: {n_refreshed}   n_saved: {n_saved}"
 
 
 @app.callback(

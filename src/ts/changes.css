@@ -62,20 +62,20 @@
 
 /* Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 5px;
+    height: 5px;
 }
 
 *::-webkit-scrollbar-track {
     background: #ffffff;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    /* -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); */
     border-radius: 3px;
 }
 
 *::-webkit-scrollbar-thumb {
     background-color: #ff8543;
     border-radius: 3px;
-    -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.6);
+    /* -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.6); */
 }
 
 
@@ -99,13 +99,22 @@
 }
 
 .e-tree-reload > .p-tree-header {
-    width: calc(100% - 50px);
+    width: calc(100% - 77px);
+    margin-top: 5px;
 }
 
 .e-tree-reload.p-button {
-    right: calc(-100% + 42px);
-    margin-top: 2px;
+    right: calc(-100% + 70px);
 }
+
+.e-layout-save.p-tree {
+    margin-top: -40px;
+}
+
+.e-layout-save.p-button {
+    right: calc(-100% + 65px);
+}
+
 
 
 
@@ -116,13 +125,12 @@
 }
 
 .h-tree-reload > .p-tree-header {
-    width: calc(100% - 95px);
-
+    width: calc(100% - 77px);
+    margin-top: 5px;
 }
 
 .h-tree-reload.p-button {
-    right: calc(-100% + 86px);
-    margin-top: 2px;
+    right: calc(-100% + 70px);
 }
 
 
@@ -131,8 +139,17 @@
 }
 
 .h-tree-clear.p-button {
-    right: calc(-100% + 80px);
-    margin-top: 2px;
+    right: calc(-100% + 65px);
+}
+
+.lm-panel .p-button {
+    height: 32px !important;
+    width: 32px !important;
+}
+
+.p-tree .p-tree-filter-container .p-tree-filter {
+    margin-top: 3px;
+    height: 32px;
 }
 
 
