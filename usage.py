@@ -44,6 +44,13 @@ explorerNodes = json.loads(
                     "type": "f"
                 },
                 {
+                    "id": "yxcvaf2345sgasdfasdfasdfads",
+                    "email": null,
+                    "label": "B",
+                    "parent": "h",
+                    "type": "l"
+                },                
+                {
                     "id": "lnhgn6u7ytnrhipilto",
                     "app": "example",
                     "data": {

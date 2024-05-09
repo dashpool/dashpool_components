@@ -46,6 +46,7 @@ const iconMapping: { [key: string]: string } = {
     r: 'far fa-file-powerpoint',
     s: 'far fa-user',
     f: 'far fa-folder',
+    l: 'fas fa-border-all',
     d: ''
 };
 
