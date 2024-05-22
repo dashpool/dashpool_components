@@ -558,7 +558,7 @@ const Explorer = (props: ExplorerProps) => {
       <ContextMenu ref={cm} model={contextMenuItems} ></ContextMenu>
 
       <Button onClick={handleRefresh} icon="fa fa-sync" className='e-tree-reload' rounded />
-      <Button onClick={handleSave} icon="fas fa-save" className='e-layout-save' rounded />
+      {/* <Button onClick={handleSave} icon="fas fa-save" className='e-layout-save' rounded /> */}
       {/* Main Tree View*/}
       <Tree value={internalNodes} dragdropScope={'dashpool'} ref={explorer}
         className='e-tree-reload'

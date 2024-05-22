@@ -94,7 +94,7 @@
 
 /* ======= reload /clear button ===========*/
 
-.e-tree-reload.p-tree {
+/* .e-tree-reload.p-tree {
     margin-top: -40px;
 }
 
@@ -113,10 +113,21 @@
 
 .e-layout-save.p-button {
     right: calc(-100% + 65px);
+} */
+
+
+.e-tree-reload.p-tree {
+    margin-top: -40px;
 }
 
+.e-tree-reload > .p-tree-header {
+    width: calc(100% - 37px);
+    margin-top: 5px;
+}
 
-
+.e-tree-reload.p-button {
+    right: calc(-100% + 31px);
+}
 
 
 

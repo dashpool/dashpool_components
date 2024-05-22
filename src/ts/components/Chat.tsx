@@ -320,7 +320,7 @@ const Chat = (props: LoaderProps) => {
         }
     };
 
-    setQuickButtons([{ label: 'Clear last', value: 'removelast' }, { label: 'Clear all', value: 'clearall' }, { label: 'Report problem', value: 'reportproblem' }])
+    setQuickButtons([{ label: 'Report problem', value: 'reportproblem' }, { label: 'Clear last', value: 'removelast' }, { label: 'Clear all', value: 'clearall' }])
 
 
     const vis = (url === "") ? "hidden" : "visible";
