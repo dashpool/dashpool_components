@@ -6,7 +6,7 @@ import Chat from './components/Chat';
 import Report from './components/Report';
 import { useDashpoolData } from './components/DashpoolProvider';
 import 'primereact/resources/primereact.min.css';
-import "./boostrap.theme.css"
+import "./bootstrap.theme.css"
 import "./changes.css"
 
 export {
