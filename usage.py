@@ -219,6 +219,7 @@ def layout():
                                 id="tab-panel-left",
                                 tabPlacement="left",
                                 allowDeselect=True,
+                                currentIndex=0,
                             ),
                             dlc.DockPanel(
                                 [

@@ -5,12 +5,12 @@ using Dash
 const resources_path = realpath(joinpath( @__DIR__, "..", "deps"))
 const version = "0.0.75"
 
-include("jl/chat.jl")
-include("jl/dashpoolprovider.jl")
-include("jl/explorer.jl")
-include("jl/history.jl")
-include("jl/loader.jl")
-include("jl/report.jl")
+include("jl/''_chat.jl")
+include("jl/''_dashpoolprovider.jl")
+include("jl/''_explorer.jl")
+include("jl/''_history.jl")
+include("jl/''_loader.jl")
+include("jl/''_report.jl")
 
 function __init__()
     DashBase.register_package(
