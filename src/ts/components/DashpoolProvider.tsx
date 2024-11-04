@@ -90,12 +90,8 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
   let lastWidgetEventTimestamp = useRef(0);
 
   useEffect(() => {
-    setSharedData(props.initialData);
-  }, [props.initialData])
 
-  const toast = useRef<Toast>(null);
-
-  const updateSharedData = (newData: SharedData) => {
+    const newData = props.initialData;
 
     //if there are no apps, reload the page
     if (!newData.apps || newData.apps.length === 0) {
@@ -105,6 +101,13 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
         window.location.reload();
       }, 500);
     }
+
+    setSharedData(props.initialData);
+  }, [props.initialData])
+
+  const toast = useRef<Toast>(null);
+
+  const updateSharedData = (newData: SharedData) => {
 
     const newSharedData = { ...sharedData, ...newData }
     if (props.setProps) {
