@@ -91,16 +91,19 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
 
   useEffect(() => {
 
-    const newData = props.initialData;
+    if (props.initialData && typeof props.initialData === 'object') {
+      const newData = props.initialData;
 
-    //if there are no apps, reload the page
-    if (!newData.apps || newData.apps.length === 0) {
-      // reload in 0.5 seconds
-      console.log('Reloading page');
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
+      if ('email' in newData && Array.isArray(newData.apps) && (newData.apps.length === 0 )) {
+        console.log('Reloading page');
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
     }
+
+
+
 
     setSharedData(props.initialData);
   }, [props.initialData])
