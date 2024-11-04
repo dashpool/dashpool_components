@@ -87,6 +87,10 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
   const { children } = props;
   const [sharedData, setSharedData] = useState<SharedData>({ ...props.initialData });
 
+  //if apps are not defined or an empty array, force a full page reload
+  if (!sharedData.apps || sharedData.apps.length === 0) {
+    window.location.reload();
+  }
 
   let lastWidgetEventTimestamp = useRef(0);
 
