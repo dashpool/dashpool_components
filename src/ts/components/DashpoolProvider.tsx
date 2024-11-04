@@ -87,11 +87,6 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
   const { children } = props;
   const [sharedData, setSharedData] = useState<SharedData>({ ...props.initialData });
 
-  //if apps are not defined or an empty array, force a full page reload
-  if (!sharedData.apps || sharedData.apps.length === 0) {
-    window.location.reload();
-  }
-
   let lastWidgetEventTimestamp = useRef(0);
 
   useEffect(() => {
@@ -101,6 +96,16 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
   const toast = useRef<Toast>(null);
 
   const updateSharedData = (newData: SharedData) => {
+
+    //if there are no apps, reload the page
+    if (!newData.apps || newData.apps.length === 0) {
+      // reload in 0.5 seconds
+      console.log('Reloading page');
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    }
+
     const newSharedData = { ...sharedData, ...newData }
     if (props.setProps) {
       props.setProps({ sharedData: newSharedData });
