@@ -12,11 +12,12 @@
   },
   "homepage": "https://github.com/dashpool/dashpool-components",
   "scripts": {
+    "build:hack": "node ./hack_types.js",
     "build:init": "node -e \"const fs = require('fs-extra'); const sourceDir = 'dashpool_components_base'; const destDir = 'dashpool_components'; fs.ensureDirSync(destDir); fs.copySync(sourceDir, destDir, { overwrite: true }); console.log('Build:init script completed.');\"",
     "build:js::dev": "webpack --mode development",
     "build:js": "webpack",
     "build:backends": "dash-generate-components ./src/ts/components dashpool_components -p package-info.json --r-prefix '' --jl-prefix '' --ignore \\.test\\.",
-    "build": "npm run build:init && npm run build:js && npm run build:backends",
+    "build": "npm run build:hack && npm run build:init && npm run build:js && npm run build:backends",
     "watch": "npm run build:js::dev -- --watch"
   },
   "devDependencies": {
@@ -25,9 +26,9 @@
     "fs-extra": "^11.1.1",
     "npm-run-all": "^4.1.5",
     "ramda": "^0.28.0",
-    "react": "16.13.0",
+    "react": "^18.3.1",
     "react-docgen": "^5.4.0",
-    "react-dom": "16.13.0",
+    "react-dom": "^18.2.0",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.3.1",
     "typescript": "^4.7.4",
@@ -35,8 +36,8 @@
     "webpack-cli": "^4.10.0"
   },
   "peerDependencies": {
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "author": "Viktor Krückl <viktor@krueckl.de>",
   "license": "MIT",
@@ -44,6 +45,7 @@
     "primeicons": "^6.0.1",
     "primereact": "^9.6.2",
     "primereact-tree": "^6.3.1",
-    "react-chat-widget": "^3.1.4"
+    "react-chat-elements": "^12.0.16",
+    "react-markdown": "^9.0.1"
   }
 }

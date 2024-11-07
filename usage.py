@@ -326,6 +326,15 @@ def layout():
                                         label="History",
                                         icon="fa fa-clock-rotate-left",
                                     ),
+
+                                    dlc.Panel(
+                                        id="tab-chat",
+                                        children=[
+                                            dashpool_components.Chat(id="chat", messages=[], url="/ai", title=None),
+                                        ],
+                                        label="DashBot",
+                                        icon="fa-brands fa-stack-exchange",
+                                    ),
                                 ],
                                 id="tab-panel-right",
                                 tabPlacement="right",
@@ -338,7 +347,6 @@ def layout():
                 "boxPanel",
                 addToDom=True,
             ),
-            dashpool_components.Chat(id="chat", messages=[], url="/ai"),
         ],
         id="context",
     )
@@ -447,7 +455,13 @@ def ai():
         return send_chunked_response()
     else:
         message_id = str(uuid.uuid4()) 
-        return jsonify([{"role": "assistant", "id": message_id, "content": "Hello"}])
+        return jsonify([{"role": "assistant", "id": message_id, "content": """Hello, how can I help you?
+* List item 1
+* List item 2
+                         
+```python 
+print("Hello World")
+```"""}])	
 
 
 def send_chunked_response():
@@ -459,7 +473,7 @@ def send_chunked_response():
         large_text = "aaa aaa aaa aaa aa aaa a aa a aaaa  aaa "*20
         chunk_size = 3  # You can adjust the chunk size based on your needs
         for i in range(0, len(large_text), chunk_size):
-            time.sleep(0.05)
+            time.sleep(0.005)
             yield large_text[i:i + chunk_size]
 
         message_id = str(uuid.uuid4()) 
@@ -472,7 +486,7 @@ def send_chunked_response():
         large_text = "bb bbbbb bbb bbbbb b b bbb bbbbbb b bbbb  "*10
         chunk_size = 3  # You can adjust the chunk size based on your needs
         for i in range(0, len(large_text), chunk_size):
-            time.sleep(0.05)
+            time.sleep(0.005)
             yield large_text[i:i + chunk_size]
 
 

@@ -1,0 +1,86 @@
+#tab-chat .container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+}
+
+#tab-chat .title {
+    
+    background-color: #eee;
+    color: #000000;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 1.0em;
+    text-align: center;
+    flex: 0 0 auto;
+    
+}
+
+#tab-chat .lm-panel {
+    padding: 0;
+}
+
+#tab-chat .scroller {
+    display: flex;
+    flex-direction: column-reverse;
+    overflow-y: auto;
+    flex: 1 1 auto;
+}
+
+#tab-chat .rce-container-input {
+    background-color: #eee;
+    padding: 5px 0px 7px 6px;
+    flex: 0 0 auto;
+}
+
+#tab-chat .rce-button  {
+    background: #f60 !important ;
+    color: #fff !important;
+    font-weight: bold;
+
+
+
+    
+}
+
+#tab-chat .rce-container-mbox  {
+    min-width: 200px !important;
+
+}
+
+.assistant-message .rce-mbox {
+    background-color: #ffdcc6;
+}
+
+.assistant-message .rce-mbox-left-notch {
+    fill: #ffdcc6;
+}
+
+#tab-chat .chat-mini-button {
+    width: 30% !important;
+    padding: 1px;
+    font-size: 10px;
+    justify-content: center;
+}
+
+#tab-chat .chat-mini-button-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+    background-color: #eee;
+}
+
+#tab-chat .rce-mbox-time {
+    margin-top: -7px;
+}
+
+#tab-chat .rce-input-textarea {
+    height: 31px;
+    padding: 5px 3px;
+    resize: none;
+}
+
+#tab-chat .rce-mbox {
+    padding: 3px 6px 4px;
+}
