@@ -48,6 +48,11 @@ type LoaderProps = {
      */
     dashpoolEvent?: DashpoolEvent
 
+    /**
+     * a style dictionary
+     */
+    style?: any;
+
     setProps: (props: Record<string, any>) => void;
 }
 
@@ -89,6 +94,26 @@ const toChatMessage = (message: any) => {
         } as ChatMessageType;
     }
 
+    if (message.role === "photo") {
+        return {
+            position: 'left',
+            type: 'photo',
+            data: ("data" in message) ? message.data : {size: 0, url: ""},
+            date: new Date(),
+        } as ChatMessageType;
+    }
+
+    if (message.role === "file") {
+        return {
+            position: 'left',
+            type: 'file',
+            title: 'file',
+            data: ("data" in message) ? message.data : {size: 0, url: ""},
+            date: new Date(),
+        } as ChatMessageType;
+    }
+
+
     return {
         position: 'right',
         type: 'system',
@@ -104,7 +129,7 @@ const Chat = (props: LoaderProps) => {
     const { id, url, messages, title, setProps } = props;
 
 
-    const { sharedData, updateSharedData } = useDashpoolData();
+    let { sharedData } = useDashpoolData() || { sharedData: {} };
 
     const [currentMessages, setCurrentMessages] = useState(messages);
     const [chatMessages, setChatMessages] = useState<ChatMessageType[]>(messages.map(toChatMessage));
@@ -126,9 +151,9 @@ const Chat = (props: LoaderProps) => {
 
 
 
-    function handleStringResult(new_result, known_ids, events) {
+    function handleStringResult(new_result, known_ids, events, split = true) {
 
-        const jsonObjects = new_result.split('\n');
+        const jsonObjects = (split) ? new_result.split('\n') : [new_result];
 
         if (jsonObjects) {
 
@@ -151,7 +176,7 @@ const Chat = (props: LoaderProps) => {
 
                     const message = JSON.parse(jsonObject);
 
-                    if (message.role === "assistant") {
+                    if (message.role === "assistant" || message.role === "photo" || message.role === "file") {
                         if (known_ids.includes(message.id)) {
                             //deleteMessages(1, message.id)
                             //update the message with the new content
@@ -276,6 +301,7 @@ const Chat = (props: LoaderProps) => {
 
 
                     } catch (error) {
+                        console.log("ERROR");
                         console.log(error);
                         // Handle JSON parsing errors if necessary
                     }
@@ -283,6 +309,8 @@ const Chat = (props: LoaderProps) => {
 
                     await fireEventsWithDelay(events, setProps);
                 }
+
+                handleStringResult(result, known_ids, events, false);
             }
         } catch (error) {
             const errorMessage = `
@@ -399,7 +427,7 @@ const Chat = (props: LoaderProps) => {
     return (
 
 
-        <div id={id + "-container"} className='container' >
+        <div id={id + "-container"} className='container dpc-container' style={props.style} >
             {title && <div className="title">{title}</div>}
             <div id={id + "-scroll"} className='scroller'>
                 
@@ -457,7 +485,8 @@ const Chat = (props: LoaderProps) => {
 Chat.defaultProps = {
     title: "Dashpool Chat AI",
     messages: [],
-    url: ""
+    url: "",
+    style: {},
 };
 
 export default Chat;

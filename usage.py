@@ -311,6 +311,19 @@ def layout():
                                         id="dlB",
                                         title="DCC Loader",
                                     ),
+                                    dlc.Widget(
+                                        [
+                                            dashpool_components.Chat(
+                                                id="chat-two",
+                                                messages=[],
+                                                url="/ai",
+                                                title=None,
+                                                style={"height": "100%"},
+                                            )
+                                        ],
+                                        id="chat-widget",
+                                        title="Chat",
+                                    ),
                                 ],
                                 id="dock-panel",
                             ),
@@ -449,51 +462,43 @@ def passWidgetEvent(input):
     return input
 
 
+
 @app.server.route("/ai", methods=["POST"])
 def ai():
-    if random.random() < 0.5:  # 50% chance of sending a chunked response with larger text
-        return send_chunked_response()
-    else:
-        message_id = str(uuid.uuid4()) 
-        return jsonify([{"role": "assistant", "id": message_id, "content": """Hello, how can I help you?
+
+    from dashpool_components import chatutils
+
+
+    with chatutils.Response(app) as resp:
+
+        if random.random() < 0.5:
+            resp.add(
+                chatutils.Photo("https://raw.githubusercontent.com/dashpool/.github/main/media/logo.svg", 100, 100)
+            )
+
+        if random.random() < 0.5:
+            resp.add(
+                chatutils.File("https://raw.githubusercontent.com/dashpool/.github/main/media/logo.svg", 100)
+            )
+
+        result_string = """Hello, how can I help you?
 * List item 1
 * List item 2
-                         
+
 ```python 
 print("Hello World")
-```"""}])	
+``` """
 
+        def generator():
+            for e in result_string:
+                time.sleep(0.01)
+                yield e
 
-def send_chunked_response():
-    def generate_chunks():
-        message_id = str(uuid.uuid4()) 
-        yield f'[\n{{"role": "assistant", "id": "{message_id}",  "content": "'
-
-        # Generating and sending chunks of larger text
-        large_text = "aaa aaa aaa aaa aa aaa a aa a aaaa  aaa "*20
-        chunk_size = 3  # You can adjust the chunk size based on your needs
-        for i in range(0, len(large_text), chunk_size):
-            time.sleep(0.005)
-            yield large_text[i:i + chunk_size]
-
-        message_id = str(uuid.uuid4()) 
-        yield f'"}},\n{{"role": "dashpoolEvent",  "id": "{message_id}",  "content": {{"test": 1, "versuch": "super"}} }}'
-
-        time.sleep(.2)
-        message_id = str(uuid.uuid4()) 
-        yield f',\n{{"role": "assistant", "id": "{message_id}",  "content": "'
-
-        large_text = "bb bbbbb bbb bbbbb b b bbb bbbbbb b bbbb  "*10
-        chunk_size = 3  # You can adjust the chunk size based on your needs
-        for i in range(0, len(large_text), chunk_size):
-            time.sleep(0.005)
-            yield large_text[i:i + chunk_size]
-
-
-        yield '"}\n]'
-
-        
-    return Response(generate_chunks(), content_type="application/json")
+        resp.add(generator)
+        resp.add(generator)
+                
+   
+        return resp.generate_response()
 
 
 

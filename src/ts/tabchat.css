@@ -1,12 +1,11 @@
-#tab-chat .container {
+.dpc-container.container {
     display: flex;
     flex-direction: column;
     height: 100%;
 
 }
 
-#tab-chat .title {
-    
+.dpc-container .title {
     background-color: #eee;
     color: #000000;
     padding: 10px;
@@ -17,34 +16,37 @@
     
 }
 
-#tab-chat .lm-panel {
-    padding: 0;
+.dpc-container .lm-panel {
+    padding: 2px;
 }
 
-#tab-chat .scroller {
+.dpc-container .scroller {
     display: flex;
     flex-direction: column-reverse;
     overflow-y: auto;
     flex: 1 1 auto;
 }
 
-#tab-chat .rce-container-input {
-    background-color: #eee;
-    padding: 5px 0px 7px 6px;
-    flex: 0 0 auto;
+.rce-input-buttons .p-button {
+    height: 32px !important;
+    width: 32px !important;
 }
 
-#tab-chat .rce-button  {
+.rce-container-input {
+    background-color: #eee !important; ;
+    padding: 2px 0px 7px 6px !important;
+    flex: 0 0 auto !important;
+    border-top-left-radius: 8px !important;
+    border-top-right-radius: 8px !important;
+}
+
+.dpc-container .rce-button  {
     background: #f60 !important ;
     color: #fff !important;
-    font-weight: bold;
-
-
-
-    
+    font-weight: bold;    
 }
 
-#tab-chat .rce-container-mbox  {
+.dpc-container .rce-container-mbox  {
     min-width: 200px !important;
 
 }
@@ -57,28 +59,33 @@
     fill: #ffdcc6;
 }
 
-#tab-chat .chat-mini-button {
+.chat-mini-button-container .chat-mini-button {
     width: 30% !important;
+    height: unset !important;
     padding: 1px;
-    font-size: 10px;
+    font-size: 10px !important;
     justify-content: center;
 }
 
-#tab-chat .chat-mini-button-container {
+
+.chat-mini-button-container {
     display: flex;
     justify-content: space-between;
     padding: 5px;
     background-color: #eee;
+
+    border-bottom-left-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
 }
 
 #tab-chat .rce-mbox-time {
     margin-top: -7px;
 }
 
-#tab-chat .rce-input-textarea {
-    height: 31px;
-    padding: 5px 3px;
-    resize: none;
+.rce-container-input .rce-input-textarea {
+    height: 31px !important;
+    padding: 5px 3px !important;
+    resize: none !important;
 }
 
 #tab-chat .rce-mbox {
