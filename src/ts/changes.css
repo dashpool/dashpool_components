@@ -192,3 +192,9 @@
     left: 0;
     right: 0;
   }
+
+
+/* pdf-viewer in a lm-panel */
+.lm-panel:has(> .pdf-viewer-container:first-child) {
+    padding: 0;
+}

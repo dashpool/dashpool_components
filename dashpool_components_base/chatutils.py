@@ -1,60 +1,4 @@
-
-
-class File:
-    def __init__(self, url, size):
-        self.url = url
-        self.size = size
-
-    def to_dict(self):
-        return {
-            "role": "file",
-            "data": {
-                "url": self.url,
-                "size": self.size if self.size else "File"
-            }
-        }
-
-class Photo:
-    def __init__(self, url, width, height):
-        self.url = url
-        self.width = width
-        self.height = height
-
-    def to_dict(self):
-        return {
-            "role": "photo",
-            "data": {
-                "uri": self.url,
-                "width": self.width if self.width else 100,
-                "height": self.height if self.height else 100
-            }
-        }
-    
-class DashpoolEvent:
-    def __init__(self, id, data):
-        self.id = id
-        self.data = data
-
-    def to_dict(self):
-        return {
-            "role": "dashpoolEvent",
-            "id": self.id,
-            "content": self.data
-        }
-    
-class NodeChangeEvent:
-    def __init__(self, id, data):
-        self.id = id
-        self.data = data
-
-    def to_dict(self):
-        return {
-            "role": "nodeChangeEvent",
-            "id": self.id,
-            "content": self.data
-        }    
-
-
+from . document_classes import *
 
 class Response:
     def __init__(self, app):
@@ -90,12 +34,23 @@ class Response:
         import json
         import uuid
 
+
         def generator():
+
+            doc_counter = 0
+
             yield "[\n"
             for response in self.responses:
 
+                # check if reference of doc class is set
+                if isinstance(response, document_classes):
+                    if response.ref is None:
+                        response.ref = "doc" + str(doc_counter)
+                        doc_counter = doc_counter + 1
+                
+
                 # first make a dict
-                response_dict = response.to_dict() if isinstance(response, (File, Photo, DashpoolEvent, NodeChangeEvent)) else response
+                response_dict = response.to_dict() if isinstance(response, document_classes) else response
 
                 # add the id
                 self.__ensure_id(response_dict)

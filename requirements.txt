@@ -1,3 +1,4 @@
 dash[dev]>=2.5.1
 wheel
 build
+dash-pdf-highlighter

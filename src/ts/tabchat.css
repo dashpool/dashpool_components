@@ -59,6 +59,16 @@
     fill: #ffdcc6;
 }
 
+.rce-mbox-text::after {
+    height: 0px;
+    content: "" !important;
+}
+
+.rce-mbox-text p {
+    margin: 0px;
+    padding: 0px;
+}
+
 .chat-mini-button-container .chat-mini-button {
     width: 30% !important;
     height: unset !important;
