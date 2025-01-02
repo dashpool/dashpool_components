@@ -120,11 +120,34 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({ content, referenceMes
 
         }
 
+        if (message.role === "reference") {
+            //Markdown of a reference
+            popuptext = message.data.markdown;
+
+            if ("img" in message.data && message.data.img) {
+                popuptext += `\n![Image](${message.data.img})\n`;
+            }
+
+            if ("url" in message.data && message.data.url) {
+                popuptext += `\n${message.data.url}`;
+            }
+        }
+
         return popuptext;
     }
 
 
     const renderPopover = (message: any) => {
+
+        const renderers = {
+            img: ({ node, alt, src, title, ...props }) => {
+                console.log("image", src, alt, title, props);
+                return <img src={src} alt={alt} title={title} {...props} style={{ maxWidth: 390 }} />;
+            }
+
+
+        };
+
         return (
             <div style={{
                 backgroundColor: '#fff',
@@ -132,9 +155,11 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({ content, referenceMes
                 boxShadow: '0px 3px 5px 2px #0003',
                 padding: '5px',
                 maxWidth: '400px',
+                maxHeight: '900px',
+                scale: '0.8',
                 zIndex: 99000
             }}>
-                <Markdown remarkPlugins={[remarkGfm]}>
+                <Markdown components={renderers} remarkPlugins={[remarkGfm]} urlTransform={(value: string) => value} >
                     {getPopupText(message)}
                 </Markdown>
             </div>
@@ -209,7 +234,7 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({ content, referenceMes
                                 setProps({
                                     dashpoolEvent: {
                                         type: "openReference",
-                                        data: referenceMessage,
+                                        data: ("data" in referenceMessage) ? referenceMessage.data : referenceMessage,
                                         timestamp: new Date().toISOString()
                                     }
                                 });
@@ -263,7 +288,7 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({ content, referenceMes
         },
     };
 
-    return <Markdown components={renderers} remarkPlugins={[remarkGfm]} >{content}</Markdown>;
+    return <Markdown components={renderers} remarkPlugins={[remarkGfm]} urlTransform={(value: string) => value} >{content}</Markdown>;
 };
 
 
@@ -387,7 +412,7 @@ const Chat = (props: LoaderProps) => {
 
                     const message = JSON.parse(jsonObject);
 
-                    if (message.role === "assistant" || message.role === "photo" || message.role === "pdf") {
+                    if (message.role === "assistant" || message.role === "photo" || message.role === "pdf" || message.role === "reference") {
 
 
                         if ("show" in message && message.show === false) {
