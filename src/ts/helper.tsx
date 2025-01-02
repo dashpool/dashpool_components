@@ -36,6 +36,13 @@ const setDashpoolEvent = (type: string, data: any, setProps: any) => {
     if (setProps) {
         setProps({ dashpoolEvent: newDashpoolEvent(type, data) });
     }
+    //check if a freame property is set in the url
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    if (urlParams.get('frame')) {
+        let combined_data = { ...data, frame: urlParams.get('frame') };
+        window.parent.postMessage({ dashpoolEvent: newDashpoolEvent(type, combined_data) }, '*');
+    }
 }
 
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DashpoolEvent, TreeViewNode } from '../helper';
+import { DashpoolEvent, TreeViewNode, setDashpoolEvent } from '../helper';
 import { useDashpoolData } from './DashpoolProvider';
 import {
     MessageList,
@@ -141,7 +141,6 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({ content, referenceMes
 
         const renderers = {
             img: ({ node, alt, src, title, ...props }) => {
-                console.log("image", src, alt, title, props);
                 return <img src={src} alt={alt} title={title} {...props} style={{ maxWidth: 390 }} />;
             }
 
@@ -231,13 +230,12 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({ content, referenceMes
                             onMouseLeave={() => setIsOpen(false)}
                             onClick={() => {
                                 // create a dash event
-                                setProps({
-                                    dashpoolEvent: {
-                                        type: "openReference",
-                                        data: ("data" in referenceMessage) ? referenceMessage.data : referenceMessage,
-                                        timestamp: new Date().toISOString()
-                                    }
-                                });
+                                setDashpoolEvent(
+                                    "openReference",
+                                    ("data" in referenceMessage) ? referenceMessage.data : referenceMessage,
+                                    setProps
+                                )
+
                             }}
                         >
                             [{refIndex}]

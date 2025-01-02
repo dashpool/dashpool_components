@@ -89,7 +89,8 @@
 }
 
 #tab-chat .rce-mbox-time {
-    margin-top: -7px;
+    margin-top: 0px;
+    font-size: 9px;
 }
 
 .rce-container-input .rce-input-textarea {
@@ -100,4 +101,9 @@
 
 #tab-chat .rce-mbox {
     padding: 3px 6px 4px;
+}
+
+.rce-mbox, .rce-container-input, .chat-mini-button-container {
+    box-shadow: 1px 2px 2px 0px #0004;
+
 }

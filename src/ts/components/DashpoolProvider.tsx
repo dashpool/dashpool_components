@@ -4,6 +4,7 @@ import { Toast } from 'primereact/toast';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { Checkbox } from 'primereact/checkbox';
+import { DashpoolEvent, setDashpoolEvent } from '../helper';
 
 type AppInfo = {
   name: string,
@@ -75,6 +76,11 @@ type DashpoolProviderProps = {
   widgetEvent?: any;
 
   /**
+   * latest Dashpool Event
+   */
+  dashpoolEvent?: DashpoolEvent
+
+  /**
    * Update props to trigger callbacks.
    */
   setProps?: (props: Record<string, any>) => void;
@@ -94,7 +100,7 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
     if (props.initialData && typeof props.initialData === 'object') {
       const newData = props.initialData;
 
-      if ('email' in newData && Array.isArray(newData.apps) && (newData.apps.length === 0 )) {
+      if ('email' in newData && Array.isArray(newData.apps) && (newData.apps.length === 0)) {
         console.log('Reloading page');
         setTimeout(() => {
           window.location.reload();
@@ -222,6 +228,12 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
     // Add event listener for the message event
     const messageEventListener = (event: MessageEvent) => {
       const messageData = event.data;
+
+      if ('dashpoolEvent' in messageData) {
+        const dashpoolEvent = messageData.dashpoolEvent;
+        const { type, data } = dashpoolEvent;
+        setDashpoolEvent(type, data, props.setProps);
+      }
 
       // Check if the message has the type "fetchError"
       if (messageData.type === 'fetchError') {
