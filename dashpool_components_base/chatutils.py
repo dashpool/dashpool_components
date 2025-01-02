@@ -8,8 +8,9 @@ class Response:
             app = app.server
 
         self.app = app
-        self.responses = []
+        self.callables = []
         self.generators = []
+        self.responses = []
 
 
     def __ensure_id(self, el):
@@ -24,8 +25,11 @@ class Response:
         pass
 
     def add(self, response):
+        import types
 
         if callable(response):
+            self.callables.append(response)
+        elif isinstance(response, types.GeneratorType):
             self.generators.append(response)
         else:
             self.responses.append(response)
@@ -58,7 +62,7 @@ class Response:
                 # then dump it to json
                 yield json.dumps(response_dict) + "\n,\n"
 
-            for g in self.generators:
+            for g in self.callables:
                 id = str(uuid.uuid4())
                 yield f'{{"role": "assistant", "id": "{id}" , "content": "'
                 for item in g():
@@ -66,8 +70,17 @@ class Response:
                     item = item.replace("\n", "\\n").replace("'", "\\'").replace('"', '\\"')
                     yield item
                 yield '"}\n'
-            yield "]"
 
+            for g in self.generators:
+                id = str(uuid.uuid4())
+                yield f'{{"role": "assistant", "id": "{id}" , "content": "'
+                for item in g:
+                    # we need to escape single quotes and newlines
+                    item = item.replace("\n", "\\n").replace("'", "\\'").replace('"', '\\"')
+                    yield item
+                yield '"}\n'
+
+            yield "]"
 
 
         return self.app.response_class(generator(), mimetype='application/json')
