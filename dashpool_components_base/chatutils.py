@@ -37,6 +37,7 @@ class Response:
     def generate_response(self):
         import json
         import uuid
+        import time
 
 
         def generator():
@@ -80,6 +81,8 @@ class Response:
                     yield item
                 yield '"}\n'
 
+
+            time.sleep(0.1)
             yield "]"
 
 
