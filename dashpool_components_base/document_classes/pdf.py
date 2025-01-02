@@ -51,6 +51,7 @@ class PDF:
         for h in highlights:
             assert isinstance(h, PdfHighlight)
 
+
     def highlights_to_dict(self):
         return [
             {
@@ -105,4 +106,52 @@ class PDF:
                 "highlights": self.highlights_to_dict()
             }
         }
-    
+    @staticmethod
+    def from_dict(data, ref=None):
+        url = data["file_id"] if "file_id" in data else None
+        name = data["name"] if "name" in data else url
+        
+        highlights = [
+            PdfHighlight(
+                content=PdfHighlightContent(
+                    text=data["content"]["text"] if "text" in data["content"] else None,
+                    image=data["content"]["image"] if "image" in data["content"] else None
+                ),
+                position=PdfHighlightPosition(
+                    boundingRect=PdfHighlightPositionRect(
+                        x1=data["position"]["boundingRect"]["x1"],
+                        y1=data["position"]["boundingRect"]["y1"],
+                        x2=data["position"]["boundingRect"]["x2"],
+                        y2=data["position"]["boundingRect"]["y2"],
+                        width=data["position"]["boundingRect"]["width"],
+                        height=data["position"]["boundingRect"]["height"],
+                    ),
+                    rects=[
+                        PdfHighlightPositionRect(
+                            x1=rect["x1"],
+                            y1=rect["y1"],
+                            x2=rect["x2"],
+                            y2=rect["y2"],
+                            width=rect["width"],
+                            height=rect["height"],
+                            pageNumber=rect["pageNumber"]
+                        )
+                        for rect in data["position"]["rects"]
+                    ],
+                    pageNumber=data["position"]["pageNumber"]
+                ),
+                comment=PdfHighlightComment(
+                    text=data["comment"]["text"] if "text" in data["comment"] else "",
+                    emoji=data["comment"]["emoji"] if "emoji" in data["comment"] else ""
+                ) if "comment" in data else PdfHighlightComment(text="", emoji=""),
+                id=data["id"] if "id" in data else None,
+                file_id=data["file_id"] if "file_id" in data else None,
+                file_mode=data["file_mode"] if "file_mode" in data else None,
+            )
+        ]
+        return PDF(
+            url=url,
+            highlights=highlights,
+            name=name,
+            ref=ref
+            )
