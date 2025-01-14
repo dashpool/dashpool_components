@@ -40,11 +40,12 @@ class PdfHighlight:
 
 
 class PDF:
-    def __init__(self, url, highlights=[], name=None, ref=None):
+    def __init__(self, url="", highlights=[], name=None, ref=None, size=450):
         self.url = url
         self.highlights = highlights
         self.name = name
         self.ref = ref
+        self.size = size
         self.show = False
 
         # assert all(isinstance(h, PdfHighlight) for h in highlights)
@@ -101,7 +102,7 @@ class PDF:
             "show": self.show,
             "data": {
                 "url": self.url,
-                "size": "",
+                "size": self.size,
                 "name": self.name,
                 "highlights": self.highlights_to_dict()
             }

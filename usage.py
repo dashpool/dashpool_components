@@ -508,6 +508,8 @@ def layout():
                                                 messages=[],
                                                 url="/ai",
                                                 title=None,
+                                                showClearButton=True,
+                                                showReportButton=True,
                                             ),
                                         ],
                                         label="DashBot",
@@ -653,8 +655,8 @@ def ai():
             )
             resp.add(
                 chatutils.Reference(
-                    "https://arxiv.org/pdf/1104.4284",
-                    """Test Document
+                    size=900,
+                    markdown="""Test Document
 
 * This is a test document
 * It has some text
@@ -706,6 +708,7 @@ print("Hello World")
         result_stringA = """Hello, how can I help you?    
 List item 1 [ref2]  [ref1]  
 List item 2 *asdfsd* **asdfasdf** [ref1]  
+Unknown [ref11, ref2]
 """
 
         def generatorA():

@@ -19,7 +19,7 @@ import '../tabchat.css'
 import 'react-chat-elements/dist/main.css'
 
 
-type LoaderProps = {
+type ChatProps = {
     /**
      * Unique ID to identify this component in Dash callbacks.
      */
@@ -54,6 +54,16 @@ type LoaderProps = {
      * a style dictionary
      */
     style?: any;
+
+    /**
+     * flag if the report button should be shown
+     */
+    showReportButton?: boolean;
+
+    /**
+     * flag if the clear button should be shown
+     */
+    showClearButton?: boolean;
 
     setProps: (props: Record<string, any>) => void;
 }
@@ -139,13 +149,27 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({ content, referenceMes
 
     const renderPopover = (message: any) => {
 
+
+
+
+
+        let maxWidth: any = 400;
+        let imageWidth: any = 375;
+        if ("size" in message.data && message.data.size > 0) {
+            maxWidth = message.data.size;
+            imageWidth = maxWidth - 25;
+        }
+        //if maxWidth does not contain a unit, add px
+        if (!maxWidth.toString().includes("px")) {
+            maxWidth = maxWidth + "px";
+        }
+
         const renderers = {
             img: ({ node, alt, src, title, ...props }) => {
-                return <img src={src} alt={alt} title={title} {...props} style={{ maxWidth: 390 }} />;
+                return <img src={src} alt={alt} title={title} {...props} style={{ maxWidth: imageWidth }} />;
             }
+        };        
 
-
-        };
 
         return (
             <div style={{
@@ -153,10 +177,12 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({ content, referenceMes
                 borderRadius: '5px',
                 boxShadow: '0px 3px 5px 2px #0003',
                 padding: '5px',
-                maxWidth: '400px',
-                maxHeight: '900px',
+                maxWidth: maxWidth,
+                maxHeight: '50vh',
                 scale: '0.8',
-                zIndex: 99000
+                zIndex: 99000,
+                overflowY: 'auto',
+                overflowX: 'auto'
             }}>
                 <Markdown components={renderers} remarkPlugins={[remarkGfm]} urlTransform={(value: string) => value} >
                     {getPopupText(message)}
@@ -215,6 +241,7 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({ content, referenceMes
                 const referenceMessage = messageMap[part];
                 const refIndex = part.slice(11);
                 const [isOpen, setIsOpen] = useState(false);
+                const [isRightClicked, setIsRightClicked] = useState(false);
 
                 return (
                     <Popover
@@ -226,16 +253,19 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({ content, referenceMes
                     >
                         <span
                             style={{ color: '#e75700', cursor: 'pointer', fontWeight: 'bold' }}
-                            onMouseEnter={() => setIsOpen(true)}
-                            onMouseLeave={() => setIsOpen(false)}
+                            onMouseEnter={() => { setIsOpen(true); setIsRightClicked(false) }}
+                            onMouseLeave={() => { if (!isRightClicked) { setIsOpen(false) } }}
+                            onContextMenu={(event: any) => {
+                                event.preventDefault();
+                                setIsRightClicked(true);
+                            }}
                             onClick={() => {
                                 // create a dash event
                                 setDashpoolEvent(
                                     "openReference",
                                     ("data" in referenceMessage) ? referenceMessage.data : referenceMessage,
                                     setProps
-                                )
-
+                                );
                             }}
                         >
                             [{refIndex}]
@@ -357,7 +387,7 @@ const toChatMessage = (message: any, referenceMessages: Map<string, any>, setPro
 /**
  * Component to serve as Loader for Graphs
  */
-const Chat = (props: LoaderProps) => {
+const Chat = (props: ChatProps) => {
     const { id, url, messages, title, setProps } = props;
 
 
@@ -721,14 +751,23 @@ const Chat = (props: LoaderProps) => {
 
                     ></Button>
                 }
+                className={ (props.showReportButton || props.showClearButton) ? 'rce-container-input' : 'rce-container-input-single' }
             />
 
 
-            <div className="chat-mini-button-container">
-                <Button onClick={() => handleQuickButton('reportproblem')} disabled={inputDisabled} className='p-button-sm chat-mini-button'>Report problem</Button>
-                <Button onClick={() => handleQuickButton('removelast')} disabled={inputDisabled} className='p-button-sm chat-mini-button'>Clear last</Button>
-                <Button onClick={() => handleQuickButton('clearall')} disabled={inputDisabled} className='p-button-sm chat-mini-button'>Clear all</Button>
-            </div>
+            {(props.showReportButton || props.showClearButton) && (
+                <div className="chat-mini-button-container">
+                    {props.showReportButton && (
+                        <Button onClick={() => handleQuickButton('reportproblem')} disabled={inputDisabled} className='p-button-sm chat-mini-button'>Report problem</Button>
+                    )}
+                    {props.showClearButton && (
+                        <>
+                            <Button onClick={() => handleQuickButton('removelast')} disabled={inputDisabled} className='p-button-sm chat-mini-button'>Clear last</Button>
+                            <Button onClick={() => handleQuickButton('clearall')} disabled={inputDisabled} className='p-button-sm chat-mini-button'>Clear all</Button>
+                        </>
+                    )}
+                </div>
+            )}
 
 
         </div>
@@ -740,6 +779,9 @@ Chat.defaultProps = {
     messages: [],
     url: "",
     style: {},
+    setProps: () => { },
+    showReportButton: false,
+    showClearButton: false,
 };
 
 export default Chat;

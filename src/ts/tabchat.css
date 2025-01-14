@@ -32,13 +32,7 @@
     width: 32px !important;
 }
 
-.rce-container-input {
-    background-color: #eee !important; ;
-    padding: 2px 0px 7px 6px !important;
-    flex: 0 0 auto !important;
-    border-top-left-radius: 8px !important;
-    border-top-right-radius: 8px !important;
-}
+
 
 .dpc-container .rce-button  {
     background: #f60 !important ;
@@ -94,9 +88,11 @@
 }
 
 .rce-container-input .rce-input-textarea {
-    height: 31px !important;
+    max-height: 70px !important;
+    height: 31px;
     padding: 5px 3px !important;
     resize: none !important;
+    margin: 4px 0 4px 0;
 }
 
 #tab-chat .rce-mbox {
@@ -105,5 +101,17 @@
 
 .rce-mbox, .rce-container-input, .chat-mini-button-container {
     box-shadow: 1px 2px 2px 0px #0004;
+}
 
+
+
+.rce-container-input {
+    background-color: #eee !important; ;
+    padding: 2px 0px 2px 7px !important;
+    flex: 0 0 auto !important;
+    border-radius: 8px 8px 0px 0px !important;
+}
+
+.rce-container-input-single {
+    border-radius: 8px !important;
 }
