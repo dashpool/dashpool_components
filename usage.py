@@ -644,6 +644,8 @@ def ai():
 
     with chatutils.Response(app) as resp:
 
+        time.sleep(5)
+
         if random.random() < 0.999:
             resp.add(
                 chatutils.Photo(
