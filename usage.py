@@ -3,7 +3,7 @@ import dash_lumino_components as dlc
 import dash_express_components as dxc
 from dash import html, dcc, Input, Output
 from dash.exceptions import PreventUpdate
-from flask import jsonify, Response
+from flask import jsonify, Response, request
 import json
 import time
 import uuid
@@ -321,6 +321,8 @@ def layout():
                                                 messages=[],
                                                 url="/ai",
                                                 title=None,
+                                                # dashpoolEventOnClick=False,
+                                                # referenceTarget="_top",
                                                 style={"height": "100%"},
                                             )
                                         ],
@@ -640,9 +642,11 @@ def ai():
 
     from dashpool_components import chatutils
 
+    content = request.get_json()
+
     chatutils.PdfHighlight()
 
-    with chatutils.Response(app) as resp:
+    with chatutils.Response(app, inputs=content) as resp:
 
         time.sleep(5)
 
