@@ -110,7 +110,7 @@ class Response:
         self.logger_doc[ref] = data
 
 
-    def sanitize_string(input: str) -> str:
+    def sanitize_string(self, input: str) -> str:
         """Sanitize a string by removing invalid escape sequences, non-printable characters,
         and ensuring valid Unicode encoding."""
         import re
