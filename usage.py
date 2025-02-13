@@ -641,6 +641,8 @@ def passWidgetEvent(input):
 def ai():
 
     from dashpool_components import chatutils
+    import random
+    import string
 
     content = request.get_json()
 
@@ -648,9 +650,9 @@ def ai():
 
     with chatutils.Response(app, inputs=content) as resp:
 
-        time.sleep(5)
+        time.sleep(.3)
 
-        if random.random() < 0.999:
+        if random.random() < 0.5:
             resp.add(
                 chatutils.Photo(
                     "https://raw.githubusercontent.com/dashpool/.github/main/media/logo.svg",
@@ -678,7 +680,7 @@ print("Hello World")
                 )
             )
 
-        if random.random() < 0.999:
+        if random.random() < 0.5:
             resp.add(
                 chatutils.PDF(
                     "http://pdfobject.com/pdf/sample.pdf",
@@ -717,9 +719,11 @@ List item 2 *asdfsd* **asdfasdf** [ref1]
 Unknown [ref11, ref2]
 """
 
+
+
         def generatorA():
             for e in result_stringA:
-                time.sleep(0.01)
+                time.sleep(0.001)
                 yield e
 
         result_stringB = """Hello, how can I help you?  
@@ -729,7 +733,7 @@ Unknown [ref11, ref2]
 
         def generatorB():
             for e in result_stringB:
-                time.sleep(0.01)
+                time.sleep(0.001)
                 yield e
 
         result_stringC = """Hello this is a table
@@ -742,9 +746,24 @@ Unknown [ref11, ref2]
         
         """
 
+        # add a verly long text with lots of newlines and special characters randomly
+        special_chars = string.punctuation + string.ascii_letters + string.digits + "áéíóúñüç¡¿"
+        result_stringC = result_stringC + " ".join(
+            ["".join(random.choices(special_chars, k=10)) + "\n" for i in range(10)]
+        )
+
+        # add a very long table
+        result_stringC = result_stringC + """Hello this is a table
+| Header 1 | Header 2 | Header 3 |
+| -------- | -------- | -------- |
+""" + "\n".join(
+            [f"| Cell {i} | Cell {i + 1} | Cell {i + 2} |" for i in range(10)]
+)
+
+
         def generatorC():
             for e in result_stringC:
-                time.sleep(0.01)
+                time.sleep(0.00001)
                 yield e
 
         resp.add(generatorA)

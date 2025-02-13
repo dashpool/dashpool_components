@@ -17,6 +17,7 @@ import remarkGfm from 'remark-gfm'
 
 import '../tabchat.css'
 import 'react-chat-elements/dist/main.css'
+import JSON5 from 'json5'
 
 
 type ChatProps = {
@@ -348,7 +349,7 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({
 
 
 
-const toChatMessage = (message: any, referenceMessages: Map<string, any>, setProps: any, dashpoolEventOnClick: any, referenceTarget:any) => {
+const toChatMessage = (message: any, referenceMessages: Map<string, any>, setProps: any, dashpoolEventOnClick: any, referenceTarget: any) => {
 
     if (message.role === "assistant") {
         return {
@@ -446,7 +447,7 @@ const Chat = (props: ChatProps) => {
     const [referenceMessages, setReferenceMessages] = useState<Map<string, any>>(new Map());
 
     const [inputDisabled, setInputDisabled] = useState(false);
-    
+
     // State to manage user input
     const [userInput, setUserInput] = useState('');
 
@@ -476,19 +477,23 @@ const Chat = (props: ChatProps) => {
 
                 try {
 
-                    // Remove a trailing comma, if present
-                    jsonObject = jsonObject.replace(/,\s*$/, '');
+                    if (split) {
+                    // if we do a on the fly split of the result
 
-                    // Check if the string contains the word "assistant"
-                    if (jsonObject.includes("assistant")) {
-                        // Check if the string already ends with "}
-                        if (!jsonObject.endsWith('"}')) {
-                            // Add "} to the end
-                            jsonObject += '"}';
+                        // Remove a trailing comma, if present
+                        jsonObject = jsonObject.replace(/,\s*$/, '');
+
+                        // Check if the string contains the word "assistant"
+                        if (jsonObject.includes("assistant")) {
+                            // Check if the string already ends with "}
+                            if (!jsonObject.endsWith('"}')) {
+                                // Add "} to the end
+                                jsonObject += '"}';
+                            }
                         }
                     }
 
-                    const message = JSON.parse(jsonObject);
+                    const message = JSON5.parse(jsonObject);
 
                     if (message.role === "assistant" || message.role === "photo" || message.role === "pdf" || message.role === "reference") {
 
@@ -542,7 +547,17 @@ const Chat = (props: ChatProps) => {
                         }
                     }
 
-                } catch (error) { }
+                } catch (error) {
+                    if (split === false) {
+                        console.log("ERROR parsing Chat AI response");
+                        console.log(error);
+                        // Handle JSON parsing errors if necessary
+                        console.log(jsonObject);
+
+                        // reraise the error, with the full response and the json object that caused the error
+                        throw new Error(`Error parsing Chat AI response: ${error} \n \n ${jsonObject}`);
+                    }
+                }
             }
 
         }
@@ -628,7 +643,7 @@ const Chat = (props: ChatProps) => {
                 result += chunkText;
 
                 const currentTime = Date.now();
-                if (currentTime - lastHandleStringResultTime >= 100) {
+                if (currentTime - lastHandleStringResultTime >= 10) {
                     lastHandleStringResultTime = currentTime;
 
                     if (showTypingIndicator) {
@@ -656,11 +671,13 @@ const Chat = (props: ChatProps) => {
                     await fireEventsWithDelay(events, setProps);
                 }
 
-                handleStringResult(result, known_ids, events, false);
             }
+            handleStringResult(result, known_ids, events, false);
         } catch (error) {
-            const errorMessage = `
-            Sorry, an error occurred while processing your request.
+            const errorMessage = `Sorry, an error occurred while processing your request.
+
+
+${error.message}
           `;
 
             setCombinedMessage({ role: 'assistant', content: errorMessage });

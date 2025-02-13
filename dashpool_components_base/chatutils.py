@@ -109,10 +109,52 @@ class Response:
     def log(self, ref, data):
         self.logger_doc[ref] = data
 
+
+    def sanitize_string(input: str) -> str:
+        """Sanitize a string by removing invalid escape sequences, non-printable characters,
+        and ensuring valid Unicode encoding."""
+        import re
+        import string
+        import json
+
+        # Remove non-printable characters (e.g., control characters)
+        input = ''.join(filter(lambda x: x in string.printable, input))
+
+        input = json.dumps(input)[1:-1]
+
+        def inner_sanitize_string(item: str) -> str:
+            found = False
+
+            # Iteratively remove invalid Unicode sequences (\uXXX with incorrect length)
+            while re.search(r'\\u(?![0-9a-fA-F]{4})[0-9a-fA-F]*', item):
+                item = re.sub(r'\\u(?![0-9a-fA-F]{4})[0-9a-fA-F]*', '', item)
+                found = True
+
+            # Iteratively remove invalid escape sequences (like \y, \g, etc.)
+            while re.search(r'\\([^nrtbf\"\\/])', item):
+                item = re.sub(r'\\([^nrtbf\"\\/])', r'\1', item)
+                found = True
+
+            # Iteratively remove backslash escapes for numbers (\4, \5)
+            while re.search(r'\\[0-9]', item):
+                item = re.sub(r'\\([0-9])', r'\1', item)
+                found = True
+            
+            return item, found
+        
+
+        # Iteratively remove invalid escape sequences
+        found = True
+        while found:
+            input, found = inner_sanitize_string(input)
+
+        return input
+
     def generate_response(self):
         import json
         import uuid
         import time
+        import string
 
         def generator():
 
@@ -139,7 +181,12 @@ class Response:
 
             output_str = ""
 
+            first = True
+
             for g in self.callables:
+                if not first:
+                    yield ",\n"
+                first = False
                 id = str(uuid.uuid4())
                 yield f'{{"role": "assistant", "id": "{id}" , "content": "'
                 for item in g():
@@ -150,17 +197,20 @@ class Response:
                 yield '"}\n'
 
             for g in self.generators:
+                if not first:
+                    yield ",\n"
+                first = False
                 id = str(uuid.uuid4())
                 yield f'{{"role": "assistant", "id": "{id}" , "content": "'
                 for item in g:
                     # we need to escape single quotes and newlines
-                    item = item.replace("\n", "\\n").replace("'", "\\'").replace('"', '\\"')
+                    item = self.sanitize_string(item)
+
                     output_str += item
                     yield item
                 yield '"}\n'
 
 
-            time.sleep(0.1)
             yield "]"
 
             if self.logger_collection is not None:
