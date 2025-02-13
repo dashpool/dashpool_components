@@ -856,12 +856,12 @@ ${error.message}
             {(props.showReportButton || props.showClearButton) && (
                 <div className="chat-mini-button-container">
                     {props.showReportButton && (
-                        <Button onClick={() => handleQuickButton('reportproblem')} disabled={inputDisabled} className='p-button-sm chat-mini-button'>Report problem</Button>
+                        <Button onClick={() => handleQuickButton('reportproblem')} disabled={inputDisabled} className='p-button-sm chat-mini-button'>Report Problem</Button>
                     )}
                     {props.showClearButton && (
                         <>
-                            <Button onClick={() => handleQuickButton('removelast')} disabled={inputDisabled} className='p-button-sm chat-mini-button'>Clear last</Button>
-                            <Button onClick={() => handleQuickButton('clearall')} disabled={inputDisabled} className='p-button-sm chat-mini-button'>Clear all</Button>
+                            <Button onClick={() => handleQuickButton('removelast')} disabled={inputDisabled} className='p-button-sm chat-mini-button'>Clear Message</Button>
+                            <Button onClick={() => handleQuickButton('clearall')} disabled={inputDisabled} className='p-button-sm chat-mini-button'>New Chat</Button>
                         </>
                     )}
                 </div>
