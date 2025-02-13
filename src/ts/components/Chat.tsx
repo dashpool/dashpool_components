@@ -331,8 +331,12 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({
             if (typeof children === 'string') {
                 return <li {...props}>{renderContentWithPopover(children)}</li>;
             }
-            const content = children.map((child: React.ReactNode) => (typeof child === 'string' ? renderContentWithPopover(child) : child));
-            return <li {...props}>{content}</li>;
+            try {
+                const content = children.map((child: React.ReactNode) => (typeof child === 'string' ? renderContentWithPopover(child) : child));
+                return <li {...props}>{content}</li>;
+            } catch (e) {
+                return <li {...props}></li>;
+            }
         },
         td: ({ node, children, ...props }) => {
 
@@ -343,8 +347,13 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({
             if (typeof children === 'string') {
                 return <td {...props}>{renderContentWithPopover(children)}</td>;
             }
-            const content = children.map((child: React.ReactNode) => (typeof child === 'string' ? renderContentWithPopover(child) : child));
-            return <td {...props}>{content}</td>;
+
+            try {
+                const content = children.map((child: React.ReactNode) => (typeof child === 'string' ? renderContentWithPopover(child) : child));
+                return <td {...props}>{content}</td>;
+            } catch (e) {
+                return <td {...props}></td>;
+            }
         },
     };
 
