@@ -170,10 +170,6 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({
 
     const renderPopover = (message: any) => {
 
-
-
-
-
         let maxWidth: any = 400;
         let imageWidth: any = 375;
         if ("size" in message.data && message.data.size > 0) {

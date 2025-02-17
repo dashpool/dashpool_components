@@ -3,7 +3,7 @@ import dash_lumino_components as dlc
 import dash_express_components as dxc
 from dash import html, dcc, Input, Output
 from dash.exceptions import PreventUpdate
-from flask import jsonify, Response, request
+from flask import jsonify, Response, request, abort
 import json
 import time
 import uuid
@@ -530,7 +530,7 @@ def layout():
                 addToDom=True,
             ),
         ],
-        id="context",
+        id="context"
     )
 
 
@@ -772,6 +772,13 @@ Unknown [ref11, ref2]
 
         return resp.generate_response()
 
+
+@app.server.route("/oauth2/userinfo")
+def userinfo():
+    # return a status 401 every 5th call
+    if random.random() < 0.9:
+        return Response(status=401)
+    return jsonify({"email": "test@test.de"})
 
 if __name__ == "__main__":
     app.run_server(debug=True)

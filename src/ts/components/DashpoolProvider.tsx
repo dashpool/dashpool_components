@@ -81,6 +81,11 @@ type DashpoolProviderProps = {
   dashpoolEvent?: DashpoolEvent
 
   /**
+   * require login
+   */
+  requireLogin?: boolean;
+
+  /**
    * Update props to trigger callbacks.
    */
   setProps?: (props: Record<string, any>) => void;
@@ -247,6 +252,36 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       }
     };
 
+    if (props.requireLogin) {
+      // check if the user is logged in
+      const userinfourl = `/oauth2/userinfo`;
+      // fetch the userinfo and then use it to update the shared data
+      fetch(userinfourl)
+        .then((response) => {
+          if (response.status === 401) {
+        setShowLoginModal(true);
+          } else if (response.ok) {
+        return response.json();
+          }
+        })
+        .then((data) => {
+          
+          if (data) {
+            const new_data = {
+              ...sharedData,
+              ...data
+            }
+            updateSharedData(new_data);
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+
+
+
+    }
+
     navigator.serviceWorker.addEventListener('message', messageEventListener);
     window.addEventListener('message', messageEventListener);
 
@@ -307,7 +342,9 @@ const useDashpoolData = (): DashpoolContextType => {
 };
 
 
-DashpoolProvider.defaultProps = {};
+DashpoolProvider.defaultProps = {
+  requireLogin: true
+};
 
 export { useDashpoolData, FrameInfo, AppInfo };
 export default DashpoolProvider;
