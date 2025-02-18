@@ -3,7 +3,7 @@ import dash_lumino_components as dlc
 import dash_express_components as dxc
 from dash import html, dcc, Input, Output
 from dash.exceptions import PreventUpdate
-from flask import jsonify, Response, request, abort
+from flask import jsonify, Response, request, abort, redirect, url_for
 import json
 import time
 import uuid
@@ -782,3 +782,12 @@ def userinfo():
 
 if __name__ == "__main__":
     app.run_server(debug=True)
+
+
+@app.server.route("/oauth2/start")
+def start():
+    return redirect("/ok")
+
+@app.server.route("/ok")
+def ok():
+    return "ok"

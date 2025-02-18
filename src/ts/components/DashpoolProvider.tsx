@@ -97,6 +97,8 @@ type DashpoolProviderProps = {
 const DashpoolProvider = (props: DashpoolProviderProps) => {
   const { children } = props;
   const [sharedData, setSharedData] = useState<SharedData>({ ...props.initialData });
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [wasLoggedIn, setWasLoggedIn] = useState(false);  
 
   let lastWidgetEventTimestamp = useRef(0);
 
@@ -107,14 +109,12 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
 
       if ('email' in newData && Array.isArray(newData.apps) && (newData.apps.length === 0)) {
         console.log('Reloading page');
+        setWasLoggedIn(true);
         setTimeout(() => {
           window.location.reload();
         }, 500);
       }
     }
-
-
-
 
     setSharedData(props.initialData);
   }, [props.initialData])
@@ -164,7 +164,8 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
 
 
   // /// LOGIN section
-  const [showLoginModal, setShowLoginModal] = useState(false);
+
+
   const [reloadPageAfterLogin, setReloadPageAfterLogin] = useState(true);
 
   const initLogin = () => {
@@ -172,8 +173,16 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
     // Get the current URL
     const currentUrl = window.location.href;
 
+    // remove subpath from the url
+    const url = new URL(currentUrl);
+    const subpath = url.pathname.split('/')[1];
+    if (subpath) {
+      url.pathname = '/';
+    }
+    const newUrl = url.toString();
+
     // Construct the URL for the OAuth2 proxy login
-    const oauth2StartUrl = `/oauth2/start?rd=${encodeURIComponent(currentUrl)}`;
+    const oauth2StartUrl = `/oauth2/start?rd=${encodeURIComponent(newUrl)}`;
 
     // Define popup window options
     const popupWindowOptions = 'width=800,height=600,resizable=no,scrollbars=no';
@@ -191,9 +200,10 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       };
 
       popupWindow.addEventListener("message", (event) => {
-        if (popupWindow.location.href === currentUrl) {
+        if (popupWindow.location.href === newUrl) {
           popupWindow.close();
           setShowLoginModal(false);
+
         }
       });
 
@@ -272,6 +282,7 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
               ...data
             }
             updateSharedData(new_data);
+            setWasLoggedIn(true);
           }
         })
         .catch((error) => {
@@ -295,7 +306,7 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
   return (
     <div>
       {/* Your other content here */}
-      <DashpoolContext.Provider value={{ sharedData, updateSharedData }}>
+      <DashpoolContext.Provider value={{ sharedData, updateSharedData }} >
         {children}
       </DashpoolContext.Provider>
 
@@ -304,23 +315,26 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
 
       <Dialog
         visible={showLoginModal}
-        onHide={onHide}
+        onHide={() => {}}
         header="You are not logged in!"
         modal={true}
+        closable={false}
+        
         footer={
           <div style={{ marginRight: "-8px" }}>
-            <Button onClick={onHide} className="p-button-secondary">Cancel</Button>
-            <Button onClick={initLogin} className="p-button-primary">OK</Button>
+          {wasLoggedIn && <Button onClick={onHide} className="p-button-secondary">Cancel</Button>}
+        <Button onClick={initLogin} className="p-button-primary">OK</Button>
           </div>
         }
+        className='login-dialog'
       >
         Please click the 'Login' button to initiate the login process.<br />
         A popup window will appear to create a login request.<br />
         <div className='mt-2 p-2'>
           <Checkbox
-            inputId="reloadCheckbox"
-            checked={reloadPageAfterLogin}
-            onChange={(e) => setReloadPageAfterLogin(e.checked)}
+        inputId="reloadCheckbox"
+        checked={reloadPageAfterLogin}
+        onChange={(e) => setReloadPageAfterLogin(e.checked)}
           />
           <label htmlFor="reloadCheckbox">&nbsp;Reload the page after login</label>
         </div>

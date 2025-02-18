@@ -198,3 +198,8 @@
 .lm-panel:has(> .pdf-viewer-container:first-child) {
     padding: 0;
 }
+
+/* select the parent of every .login-dialog div*/
+.p-dialog-mask:has(> .login-dialog) {
+    background-color: #cccccc !important;
+}
