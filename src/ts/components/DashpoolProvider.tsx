@@ -200,10 +200,10 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       };
 
       popupWindow.addEventListener("message", (event) => {
-        if (popupWindow.location.href === newUrl) {
+        const popupUrl = new URL(popupWindow.location.href);
+        if (popupUrl.origin === url.origin && popupUrl.pathname.replace(/\/$/, '') === url.pathname.replace(/\/$/, '')) {
           popupWindow.close();
           setShowLoginModal(false);
-
         }
       });
 
