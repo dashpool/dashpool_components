@@ -126,9 +126,9 @@ class Response:
             found = False
 
             # Iteratively remove invalid Unicode sequences (\uXXX with incorrect length)
-            while re.search(r'\\u(?![0-9a-fA-F]{4})[0-9a-fA-F]*', item):
-                item = re.sub(r'\\u(?![0-9a-fA-F]{4})[0-9a-fA-F]*', '', item)
-                found = True
+            # while re.search(r'\\u(?![0-9a-fA-F]{4})[0-9a-fA-F]*', item):
+            #     item = re.sub(r'\\u(?![0-9a-fA-F]{4})[0-9a-fA-F]*', '', item)
+            #     found = True
 
             # Iteratively remove invalid escape sequences (like \y, \g, etc.)
             while re.search(r'\\([^nrtbf\"\\/])', item):

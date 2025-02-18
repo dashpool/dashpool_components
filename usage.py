@@ -736,7 +736,7 @@ Unknown [ref11, ref2]
                 time.sleep(0.001)
                 yield e
 
-        result_stringC = """Hello this is a table
+        result_stringC = """Hellö this is a table
 
 | Header 1 | Header 2 | Header 3 |
 | -------- | -------- | -------- |
