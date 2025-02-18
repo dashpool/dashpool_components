@@ -780,14 +780,20 @@ def userinfo():
         return Response(status=401)
     return jsonify({"email": "test@test.de"})
 
+@app.server.route("/oauth2/start")
+def start():
+    return redirect("/dummy")
+
+
+@app.server.route("/dummy")
+def dummy():
+    import time
+    time.sleep(1)
+    return redirect("/")
+
+
+
 if __name__ == "__main__":
     app.run_server(debug=True)
 
 
-@app.server.route("/oauth2/start")
-def start():
-    return redirect("/ok")
-
-@app.server.route("/ok")
-def ok():
-    return "ok"

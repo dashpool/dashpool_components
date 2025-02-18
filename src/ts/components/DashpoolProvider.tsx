@@ -108,7 +108,6 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       const newData = props.initialData;
 
       if ('email' in newData && Array.isArray(newData.apps) && (newData.apps.length === 0)) {
-        console.log('Reloading page');
         setWasLoggedIn(true);
         setTimeout(() => {
           window.location.reload();
@@ -175,10 +174,7 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
 
     // remove subpath from the url
     const url = new URL(currentUrl);
-    const subpath = url.pathname.split('/')[1];
-    if (subpath) {
-      url.pathname = '/';
-    }
+    url.pathname = '/';
     const newUrl = url.toString();
 
     // Construct the URL for the OAuth2 proxy login
@@ -195,30 +191,36 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       // Handle errors gracefully, if necessary
       popupWindow.onerror = (error) => {
         console.error('OAuth2 popup error:', error);
-
         toast.current?.show({ severity: "error", summary: 'OAuth2 popup error', detail: error, life: 3000 });
       };
 
       popupWindow.addEventListener("message", (event) => {
         const popupUrl = new URL(popupWindow.location.href);
+        
         if (popupUrl.origin === url.origin && popupUrl.pathname.replace(/\/$/, '') === url.pathname.replace(/\/$/, '')) {
-          popupWindow.close();
-          setShowLoginModal(false);
-        }
-      });
-
-      const intervalId = setInterval(function () {
-        if (popupWindow && popupWindow.closed) {
-          clearInterval(intervalId);
-          popupWindow.close();
-          setShowLoginModal(false);
-        } else if (popupWindow && popupWindow.location.href === document.location.href) {
-          clearInterval(intervalId);
           popupWindow.close();
           setShowLoginModal(false);
           if (reloadPageAfterLogin) {
             window.location.reload();
           }
+        }
+      });
+
+      const intervalId = setInterval(function () {
+        try {
+          if (popupWindow && popupWindow.closed) {
+        clearInterval(intervalId);
+        setShowLoginModal(false);
+          } else if (popupWindow && popupWindow.location.href === newUrl) {
+        clearInterval(intervalId);
+        popupWindow.close();
+        setShowLoginModal(false);
+        if (reloadPageAfterLogin) {
+          window.location.reload();
+        }
+          }
+        } catch (error) {
+          console.error('Error checking popup window:', error);
         }
       }, 100);
 
@@ -328,7 +330,7 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
         }
         className='login-dialog'
       >
-        Please click the 'Login' button to initiate the login process.<br />
+        Click OK to start the login with Azure AD.<br />
         A popup window will appear to create a login request.<br />
         <div className='mt-2 p-2'>
           <Checkbox
