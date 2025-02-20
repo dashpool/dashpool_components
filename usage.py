@@ -749,7 +749,7 @@ Unknown [ref11, ref2]
         # add a verly long text with lots of newlines and special characters randomly
         special_chars = string.punctuation + string.ascii_letters + string.digits + "áéíóúñüç¡¿"
         result_stringC = result_stringC + " ".join(
-            ["".join(random.choices(special_chars, k=10)) + "\n" for i in range(10)]
+            ["".join(random.choices(special_chars, k=10)) + "\n" for i in range(500)]
         )
 
         # add a very long table

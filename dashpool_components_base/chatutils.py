@@ -1,7 +1,6 @@
 from . document_classes import *
 import datetime
 
-
 def get_promtflow_inputs(content):
     """Extract the query, history and shared data from the content
     
@@ -117,21 +116,14 @@ class Response:
         import string
         import json
 
-        # Remove non-printable characters (e.g., control characters)
-        input = ''.join(filter(lambda x: x in string.printable, input))
-
+        # Convert input to JSON string, to escape special characters
         input = json.dumps(input)[1:-1]
 
         def inner_sanitize_string(item: str) -> str:
             found = False
 
-            # Iteratively remove invalid Unicode sequences (\uXXX with incorrect length)
-            # while re.search(r'\\u(?![0-9a-fA-F]{4})[0-9a-fA-F]*', item):
-            #     item = re.sub(r'\\u(?![0-9a-fA-F]{4})[0-9a-fA-F]*', '', item)
-            #     found = True
-
             # Iteratively remove invalid escape sequences (like \y, \g, etc.)
-            while re.search(r'\\([^nrtbf\"\\/])', item):
+            while re.search(r'\\([^nurtbf\"\\/])', item):
                 item = re.sub(r'\\([^nrtbf\"\\/])', r'\1', item)
                 found = True
 
@@ -191,7 +183,7 @@ class Response:
                 yield f'{{"role": "assistant", "id": "{id}" , "content": "'
                 for item in g():
                     # we need to escape single quotes and newlines
-                    item = item.replace("\n", "\\n").replace("'", "\\'").replace('"', '\\"')
+                    item = self.sanitize_string(item)
                     output_str += item
                     yield item
                 yield '"}\n'
