@@ -28,6 +28,7 @@ app.layout = html.Div(
             ],
             id="context",
             requireLogin=True,
+            defaultReload=False,
         )
     ],
     style={"width": "100%", "height": "100vh"},

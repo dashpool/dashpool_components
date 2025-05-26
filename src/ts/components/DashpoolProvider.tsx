@@ -86,6 +86,11 @@ type DashpoolProviderProps = {
   requireLogin?: boolean;
 
   /**
+   * default reload after login
+   */
+  defaultReload?: boolean;
+
+  /**
    * Update props to trigger callbacks.
    */
   setProps?: (props: Record<string, any>) => void;
@@ -165,7 +170,7 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
   // /// LOGIN section
 
 
-  const [reloadPageAfterLogin, setReloadPageAfterLogin] = useState(true);
+  const [reloadPageAfterLogin, setReloadPageAfterLogin] = useState(props.defaultReload ?? true);
 
   const initLogin = () => {
 
@@ -386,7 +391,8 @@ const useDashpoolData = (): DashpoolContextType => {
 
 
 DashpoolProvider.defaultProps = {
-  requireLogin: true
+  requireLogin: true,
+  defaultReload: true,
 };
 
 export { useDashpoolData, FrameInfo, AppInfo };
