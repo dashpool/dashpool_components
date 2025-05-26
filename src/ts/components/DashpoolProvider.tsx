@@ -98,7 +98,7 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
   const { children } = props;
   const [sharedData, setSharedData] = useState<SharedData>({ ...props.initialData });
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [wasLoggedIn, setWasLoggedIn] = useState(false);  
+  const [wasLoggedIn, setWasLoggedIn] = useState(false);
 
   let lastWidgetEventTimestamp = useRef(0);
 
@@ -195,29 +195,47 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       };
 
       popupWindow.addEventListener("message", (event) => {
-        const popupUrl = new URL(popupWindow.location.href);
-        
-        if (popupUrl.origin === url.origin && popupUrl.pathname.replace(/\/$/, '') === url.pathname.replace(/\/$/, '')) {
-          popupWindow.close();
-          setShowLoginModal(false);
-          if (reloadPageAfterLogin) {
-            window.location.reload();
+
+        try {
+          const popupUrl = new URL(popupWindow.location.href);
+
+          if (popupUrl.origin === url.origin && popupUrl.pathname.replace(/\/$/, '') === url.pathname.replace(/\/$/, '')) {
+            popupWindow.close();
+            setShowLoginModal(false);
+            if (reloadPageAfterLogin) {
+              window.location.reload();
+            }
           }
-        }
+
+        } catch (e) {
+          console.warn('Popup window location parse failed:', e);
+        }          
       });
 
       const intervalId = setInterval(function () {
         try {
           if (popupWindow && popupWindow.closed) {
-        clearInterval(intervalId);
-        setShowLoginModal(false);
-          } else if (popupWindow && popupWindow.location.href === newUrl) {
-        clearInterval(intervalId);
-        popupWindow.close();
-        setShowLoginModal(false);
-        if (reloadPageAfterLogin) {
-          window.location.reload();
-        }
+            clearInterval(intervalId);
+            setShowLoginModal(false);
+          } else if (popupWindow) {
+
+            console.log('Checking popup window location:', popupWindow.location.href);
+
+            try {
+              if (popupWindow.location.hostname === window.location.hostname) {
+                clearInterval(intervalId);
+                popupWindow.close();
+                setShowLoginModal(false);
+                if (reloadPageAfterLogin) {
+                  window.location.reload();
+                }
+              }
+            } catch (e) {
+              console.warn('Popup window location check failed:', e);
+            }
+
+
+
           }
         } catch (error) {
           console.error('Error checking popup window:', error);
@@ -260,7 +278,13 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
           setShowLoginModal(true);
         }
 
-        toast.current?.show({ severity: "warn", summary: messageData.message, detail: messageData.url, life: 3000 });
+        toast.current?.show({
+          severity: "warn",
+          summary: messageData.message || 'Fetch Error',
+          detail: messageData.url || '',
+          life: 3000
+        });
+
       }
     };
 
@@ -268,16 +292,21 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       // check if the user is logged in
       const userinfourl = `/oauth2/userinfo`;
       // fetch the userinfo and then use it to update the shared data
-      fetch(userinfourl)
+      fetch(
+        userinfourl, {
+        credentials: 'include',
+        headers: { 'Accept': 'application/json' }
+      }
+      )
         .then((response) => {
           if (response.status === 401) {
-        setShowLoginModal(true);
+            setShowLoginModal(true);
           } else if (response.ok) {
-        return response.json();
+            return response.json();
           }
         })
         .then((data) => {
-          
+
           if (data) {
             const new_data = {
               ...sharedData,
@@ -290,8 +319,6 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
         .catch((error) => {
           console.error('Error:', error);
         });
-
-
 
     }
 
@@ -317,15 +344,15 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
 
       <Dialog
         visible={showLoginModal}
-        onHide={() => {}}
+        onHide={() => { }}
         header="You are not logged in!"
         modal={true}
         closable={false}
-        
+
         footer={
           <div style={{ marginRight: "-8px" }}>
-          {wasLoggedIn && <Button onClick={onHide} className="p-button-secondary">Cancel</Button>}
-        <Button onClick={initLogin} className="p-button-primary">OK</Button>
+            {wasLoggedIn && <Button onClick={onHide} className="p-button-secondary">Cancel</Button>}
+            <Button onClick={() => initLogin()} className="p-button-primary">OK</Button>
           </div>
         }
         className='login-dialog'
@@ -334,11 +361,11 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
         A popup window will appear to create a login request.<br />
         <div className='mt-2 p-2'>
           <Checkbox
-        inputId="reloadCheckbox"
-        checked={reloadPageAfterLogin}
-        onChange={(e) => setReloadPageAfterLogin(e.checked)}
+            inputId="reloadCheckbox"
+            checked={reloadPageAfterLogin}
+            onChange={(e) => setReloadPageAfterLogin(e.checked)}
           />
-          <label htmlFor="reloadCheckbox">&nbsp;Reload the page after login</label>
+          <label htmlFor="reloadCheckbox">&nbsp;Reload after login</label>
         </div>
       </Dialog>
 
