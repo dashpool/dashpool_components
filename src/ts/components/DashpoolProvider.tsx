@@ -194,6 +194,8 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
 
     if (popupWindow) {
 
+      console.log('OAuth2 popup opened:', popupWindow);
+
       // Handle errors gracefully, if necessary
       popupWindow.onerror = (error) => {
         console.error('OAuth2 popup error:', error);
@@ -201,6 +203,9 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       };
 
       popupWindow.addEventListener("message", (event) => {
+
+        //print the event
+        console.log('Popup message received:', event);
 
         try {
           const popupUrl = new URL(popupWindow.location.href);
@@ -223,6 +228,15 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
       });
 
       const intervalId = setInterval(function () {
+        // check the location of the popup window
+        // If the popup window is closed, clear the interval and hide the login modal
+        try {
+          console.log('Checking popup window:', popupWindow, popupWindow.location);
+
+        } catch (e) {
+          console.warn('Error accessing popup window:', e);
+        }
+
         try {
           if (popupWindow && popupWindow.closed) {
             clearInterval(intervalId);
