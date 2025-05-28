@@ -179,11 +179,12 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
 
     // remove subpath from the url
     const url = new URL(currentUrl);
-    url.pathname = '/';
-    const newUrl = url.toString();
+
+    // Use only the pathname + search + hash (relative URL part)
+    const relativePath = url.pathname + url.search + url.hash;
 
     // Construct the URL for the OAuth2 proxy login
-    const oauth2StartUrl = `/oauth2/start?rd=${encodeURIComponent(newUrl)}`;
+    const oauth2StartUrl = `/oauth2/start?rd=${encodeURIComponent(relativePath)}`;
 
     // Define popup window options
     const popupWindowOptions = 'width=800,height=600,resizable=no,scrollbars=no';
