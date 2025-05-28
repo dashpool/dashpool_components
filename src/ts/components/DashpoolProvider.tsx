@@ -205,7 +205,11 @@ const DashpoolProvider = (props: DashpoolProviderProps) => {
         try {
           const popupUrl = new URL(popupWindow.location.href);
 
-          if (popupUrl.origin === url.origin && popupUrl.pathname.replace(/\/$/, '') === url.pathname.replace(/\/$/, '')) {
+          if (popupUrl.origin === url.origin && (
+            popupUrl.pathname.replace(/\/$/, '') === url.pathname.replace(/\/$/, '')
+            || popupUrl.pathname === '/oauth2/callback' // Handle the OAuth2 callback path
+          )
+          ) {
             popupWindow.close();
             setShowLoginModal(false);
             if (reloadPageAfterLogin) {
