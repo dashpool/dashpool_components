@@ -155,13 +155,13 @@ const MarkdownWrapper: React.FC<MarkdownWrapperProps> = ({
             //Markdown of a reference
             popuptext = message.data.markdown;
 
-            if ("img" in message.data && message.data.img) {
-                popuptext += `\n![Image](${message.data.img})\n`;
-            }
+            // if ("img" in message.data && message.data.img) {
+            //     popuptext += `\n![Image](${message.data.img})\n`;
+            // }
 
-            if ("url" in message.data && message.data.url) {
-                popuptext += `\n${message.data.url}`;
-            }
+            // if ("url" in message.data && message.data.url) {
+            //     popuptext += `\n${message.data.url}`;
+            // }
         }
 
         return popuptext;
